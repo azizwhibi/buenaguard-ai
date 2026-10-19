@@ -1,6 +1,7 @@
 # API Keys and Sensitive Files
 geminiapikey.txt
 credentials.json
+token.json
 *apikey*
 *api_key*
 *credential*
@@ -13,6 +14,22 @@ credentials.json
 .env.*
 !.env.example
 
+# Database & runtime state
+*.db
+*.sqlite3
+audit_logs.db
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+ENV/
+
 # IDE and OS files
 .idea/
 .vscode/
@@ -20,3 +37,8 @@ credentials.json
 *.swo
 .DS_Store
 Thumbs.db
+
+# Graphify & Build Artifacts
+graphify-out/
+screenshots/
+

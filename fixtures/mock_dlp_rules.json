@@ -1,0 +1,26 @@
+[
+  {
+    "ruleId": "dlp_rule_01",
+    "name": "Block German IBAN & Financial PII External Share",
+    "condition": "Contains German IBAN (DE\\d{20}) OR Credit Card Number",
+    "action": "BLOCK_EXTERNAL_SHARE",
+    "severity": "CRITICAL",
+    "isActive": true
+  },
+  {
+    "ruleId": "dlp_rule_02",
+    "name": "Warn on Tax Identification (Steuer-ID) Exposure",
+    "condition": "Contains German Steuer-ID (11 digits)",
+    "action": "AUDIT_AND_NOTIFY_ADMIN",
+    "severity": "HIGH",
+    "isActive": true
+  },
+  {
+    "ruleId": "dlp_rule_03",
+    "name": "Enforce S/MIME on Financial & Legal Email Domains",
+    "condition": "Outbound email to finance-audit@ or external bank",
+    "action": "REQUIRE_SMIME_ENCRYPTION",
+    "severity": "HIGH",
+    "isActive": true
+  }
+]

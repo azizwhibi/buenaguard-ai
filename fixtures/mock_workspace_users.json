@@ -1,0 +1,46 @@
+[
+  {
+    "id": "usr_101",
+    "primaryEmail": "cfo@client-enterprise.de",
+    "name": {
+      "fullName": "Hannah Weber"
+    },
+    "orgUnitPath": "/Executive_Finance",
+    "isAdmin": false,
+    "isEnrolledIn2Sv": true,
+    "smimeConfigured": false
+  },
+  {
+    "id": "usr_102",
+    "primaryEmail": "dev.lead@client-enterprise.de",
+    "name": {
+      "fullName": "Lukas Schmidt"
+    },
+    "orgUnitPath": "/Engineering",
+    "isAdmin": true,
+    "isEnrolledIn2Sv": true,
+    "smimeConfigured": true
+  },
+  {
+    "id": "usr_103",
+    "primaryEmail": "temp.vendor@client-enterprise.de",
+    "name": {
+      "fullName": "Marco Rossi"
+    },
+    "orgUnitPath": "/Contractors",
+    "isAdmin": false,
+    "isEnrolledIn2Sv": false,
+    "smimeConfigured": false
+  },
+  {
+    "id": "usr_104",
+    "primaryEmail": "compliance.lead@client-enterprise.de",
+    "name": {
+      "fullName": "Anja Mueller"
+    },
+    "orgUnitPath": "/Executive_Finance",
+    "isAdmin": false,
+    "isEnrolledIn2Sv": true,
+    "smimeConfigured": true
+  }
+]

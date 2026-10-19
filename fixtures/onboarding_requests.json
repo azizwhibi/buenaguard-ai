@@ -1,0 +1,26 @@
+[
+  {
+    "fullName": "Maximilian Bauer",
+    "email": "m.bauer@client-enterprise.de",
+    "department": "Finance",
+    "jobTitle": "Senior Payroll & Tax Specialist",
+    "manager": "Hannah Weber",
+    "location": "Munich, Germany"
+  },
+  {
+    "fullName": "Sophie Becker",
+    "email": "s.becker@client-enterprise.de",
+    "department": "Engineering",
+    "jobTitle": "Cloud Infrastructure Engineer",
+    "manager": "Lukas Schmidt",
+    "location": "Berlin, Germany"
+  },
+  {
+    "fullName": "Carlos Mendez",
+    "email": "c.mendez@client-enterprise.de",
+    "department": "Contractors",
+    "jobTitle": "External Security Consultant",
+    "manager": "Lukas Schmidt",
+    "location": "Remote, Spain"
+  }
+]

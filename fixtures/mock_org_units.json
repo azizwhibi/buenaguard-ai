@@ -1,0 +1,42 @@
+[
+  {
+    "name": "BuenaCloud Client Corp",
+    "orgUnitPath": "/",
+    "description": "Root Organization Unit",
+    "policies": {
+      "smime_required": false,
+      "two_step_verification": false,
+      "external_drive_sharing": "ALLOW"
+    }
+  },
+  {
+    "name": "Executive & Finance",
+    "orgUnitPath": "/Executive_Finance",
+    "description": "Strict DLP, Mandatory S/MIME, 2SV Hardware Key Required",
+    "policies": {
+      "smime_required": true,
+      "two_step_verification": true,
+      "external_drive_sharing": "BLOCKED"
+    }
+  },
+  {
+    "name": "Engineering",
+    "orgUnitPath": "/Engineering",
+    "description": "Standard DLP, 2SV Required, GitHub & GCP SSO Enabled",
+    "policies": {
+      "smime_required": false,
+      "two_step_verification": true,
+      "external_drive_sharing": "WARN"
+    }
+  },
+  {
+    "name": "External Contractors",
+    "orgUnitPath": "/Contractors",
+    "description": "Zero-Trust Restricted Access, Internal Drive Only",
+    "policies": {
+      "smime_required": false,
+      "two_step_verification": true,
+      "external_drive_sharing": "BLOCKED"
+    }
+  }
+]

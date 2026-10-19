@@ -1,0 +1,26 @@
+ANSTELLUNGSVERTRAG (ENTWURF)
+
+Zwischen der BuenaCloud Client Corp (Deutschland) und
+Herrn Lukas Schmidt, geboren am 15.07.1985 in Berlin.
+
+§ 1 Tätigkeit und Aufgabenbereich
+Der Mitarbeiter wird als Senior Staff Cloud Engineer eingestellt. Zu den Aufgaben gehören die Betreuung der Google Cloud Platform und Workspace Administration.
+
+§ 2 Vergütung und Bankverbindung
+Das jährliche Bruttogehalt beträgt 110.000 EUR, zahlbar in zwölf gleichen Monatsraten.
+Die Auszahlung erfolgt bargeldlos auf das folgende Konto des Mitarbeiters:
+Empfänger: Lukas Schmidt
+IBAN: DE89370400440532013000
+BIC: COBADEFFXXX
+Kreditinstitut: Commerzbank Berlin
+
+§ 3 Steuerliche Erfassung & Sozialversicherung
+Steuer-ID: 41234567890
+Sozialversicherungsnummer: 12 150785 S 004
+Zuständige Krankenkasse: Techniker Krankenkasse (TK)
+
+§ 4 Geheimhaltung und Datenschutz nach DSGVO / GDPR
+Der Mitarbeiter verpflichtet sich zur Einhaltung des Datenschutzes nach Art. 6 und Art. 9 DSGVO.
+Vertragsdatum: 01.11.2026
+Unterschriften:
+[Gez. Hannah Weber, CFO]                     [Gez. Lukas Schmidt]

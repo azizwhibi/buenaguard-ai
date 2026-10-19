@@ -1,0 +1,9 @@
+Sprint Planning & Engineering Roadmap Sync - Q4 2026
+
+Attendees: Lukas Schmidt, Dev Team
+Agenda:
+1. Google Workspace tenant security posture review.
+2. Architecture migration to Google Cloud Run with automated CI/CD.
+3. Review of zero-trust onboarding copilot using Gemini 2.5 Flash.
+4. Next sprint starts next Monday at 10:00 AM.
+5. No confidential customer data discussed.
