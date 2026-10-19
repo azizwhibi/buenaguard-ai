@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "buenaguard-workspace": {
+      "command": "python",
+      "args": [
+        "src/mcp_server/workspace_mcp.py"
+      ],
+      "env": {
+        "PYTHONPATH": ".",
+        "WORKSPACE_MODE": "MOCK"
+      }
+    }
+  },
+  "permissions": [
+    "mcp(buenaguard-workspace/check_domain_dlp_status)",
+    "mcp(buenaguard-workspace/list_workspace_ous)",
+    "mcp(buenaguard-workspace/scan_drive_file_dlp)",
+    "mcp(buenaguard-workspace/simulate_user_onboarding)"
+  ]
+}

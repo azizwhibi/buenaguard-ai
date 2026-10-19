@@ -348,11 +348,11 @@
   - `src/mcp_server/workspace_mcp.py`
   - `tests/test_workspace_mcp.py`
 - **Acceptance Criteria:**
-  - [ ] Tool 1: `check_domain_dlp_status()` returns tenant S/MIME, 2SV, and DLP compliance summary.
-  - [ ] Tool 2: `list_workspace_ous()` lists all OUs and their security policies.
-  - [ ] Tool 3: `scan_drive_file_dlp(file_id: str)` runs DLP scan and returns redacted audit report.
-  - [ ] Tool 4: `simulate_user_onboarding(name: str, role: str, department: str)` runs least-privilege OU analysis.
-  - [ ] Server operates cleanly over standard I/O (stdio).
+  - [x] Tool 1: `check_domain_dlp_status()` returns tenant S/MIME, 2SV, and DLP compliance summary.
+  - [x] Tool 2: `list_workspace_ous()` lists all OUs and their security policies.
+  - [x] Tool 3: `scan_drive_file_dlp(file_id: str)` runs DLP scan and returns redacted audit report.
+  - [x] Tool 4: `simulate_user_onboarding(name: str, role: str, department: str)` runs least-privilege OU analysis.
+  - [x] Server operates cleanly over standard I/O (stdio).
 - **TDD Verification Criteria:**
   - **Failing Test First:** `tests/test_workspace_mcp.py::test_mcp_tools_registration_and_execution` asserting tool schemas and handler execution results.
   - **Command to Verify:** `pytest tests/test_workspace_mcp.py -v`
@@ -368,13 +368,13 @@
   - `.agents/mcp_config.json`
   - `tests/test_mcp_config.py`
 - **Acceptance Criteria:**
-  - [ ] Config defines `buenaguard-workspace` running `python src/mcp_server/workspace_mcp.py` with `PYTHONPATH=.`.
-  - [ ] Config includes granular permission allowlist:
+  - [x] Config defines `buenaguard-workspace` running `python src/mcp_server/workspace_mcp.py` with `PYTHONPATH=.`.
+  - [x] Config includes granular permission allowlist:
     - `mcp(buenaguard-workspace/check_domain_dlp_status)`
     - `mcp(buenaguard-workspace/list_workspace_ous)`
     - `mcp(buenaguard-workspace/scan_drive_file_dlp)`
     - `mcp(buenaguard-workspace/simulate_user_onboarding)`
-  - [ ] Config adheres strictly to Antigravity MCP JSON schema.
+  - [x] Config adheres strictly to Antigravity MCP JSON schema.
 - **TDD Verification Criteria:**
   - **Failing Test First:** `tests/test_mcp_config.py::test_mcp_config_schema_and_permissions` validating JSON format, required keys, and valid command path.
   - **Command to Verify:** `pytest tests/test_mcp_config.py -v`
@@ -384,8 +384,8 @@
 ---
 
 ### Checkpoint: Phase 4 MCP Server Checkpoint
-- [ ] All Phase 4 tests pass: `pytest tests/test_workspace_mcp.py tests/test_mcp_config.py -v`
-- [ ] MCP stdio handshake validated: server starts and lists tools without error
+- [x] All Phase 4 tests pass: `pytest tests/test_workspace_mcp.py tests/test_mcp_config.py -v`
+- [x] MCP stdio handshake validated: server starts and lists tools without error
 - [ ] Review with human before Phase 5
 
 ---
