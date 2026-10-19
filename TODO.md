@@ -401,9 +401,9 @@
   - `agents/code-reviewer.md`
   - `tests/test_agent_personas.py`
 - **Acceptance Criteria:**
-  - [ ] `security-auditor.md` defines rules for detecting hardcoded keys, raw PII logging, and excessive OAuth permissions.
-  - [ ] `test-engineer.md` defines pytest coverage standards, mock isolation, and edge-case testing.
-  - [ ] `code-reviewer.md` defines Hexagonal port/adapter decoupling and clean code standards.
+  - [x] `security-auditor.md` defines rules for detecting hardcoded keys, raw PII logging, and excessive OAuth permissions.
+  - [x] `test-engineer.md` defines pytest coverage standards, mock isolation, and edge-case testing.
+  - [x] `code-reviewer.md` defines Hexagonal port/adapter decoupling and clean code standards.
 - **TDD Verification Criteria:**
   - **Failing Test First:** `tests/test_agent_personas.py::test_subagent_markdown_structure` confirming files exist and contain required role directives.
   - **Command to Verify:** `pytest tests/test_agent_personas.py -v`
@@ -419,10 +419,10 @@
   - `docs/AUDIT_REPORT.md`
   - `src/` (remediation of any auditor findings)
 - **Acceptance Criteria:**
-  - [ ] Zero hardcoded credentials or API keys across the entire repository.
-  - [ ] Zero unmasked PII logged in stdout or SQLite.
-  - [ ] Test coverage exceeds 90% across `src/`: `pytest --cov=src tests/`.
-  - [ ] All findings resolved and logged in `docs/AUDIT_REPORT.md`.
+  - [x] Zero hardcoded credentials or API keys across the entire repository.
+  - [x] Zero unmasked PII logged in stdout or SQLite.
+  - [x] Test coverage exceeds 90% across `src/`: `pytest --cov=src tests/`.
+  - [x] All findings resolved and logged in `docs/AUDIT_REPORT.md`.
 - **TDD Verification Criteria:**
   - **Verification Command:** `pytest --cov=src --cov-report=term-missing tests/`
 - **Antigravity Feature / Subagent Assignment:** Built-in Subagents (`security-auditor`, `code-reviewer`, `test-engineer`)
@@ -439,10 +439,10 @@
   - `cloudrun.yaml`
   - `tests/test_dockerfile.py`
 - **Acceptance Criteria:**
-  - [ ] `Dockerfile` uses lean Python base image and runs as non-root user (`USER nonroot`).
-  - [ ] Binds dynamically to `0.0.0.0:${PORT:-8080}`.
-  - [ ] `.dockerignore` excludes `credentials.json`, `token.json`, `geminiapikey.txt`, `.git`, `.venv`.
-  - [ ] `cloudrun.yaml` defines memory, CPU, and `/health` probe settings.
+  - [x] `Dockerfile` uses lean Python base image and runs as non-root user (`USER nonroot`).
+  - [x] Binds dynamically to `0.0.0.0:${PORT:-8080}`.
+  - [x] `.dockerignore` excludes `credentials.json`, `token.json`, `geminiapikey.txt`, `.git`, `.venv`.
+  - [x] `cloudrun.yaml` defines memory, CPU, and `/health` probe settings.
 - **TDD Verification Criteria:**
   - **Failing Test First:** `tests/test_dockerfile.py::test_dockerfile_best_practices` validating Dockerfile syntax, non-root user, and `.dockerignore` exclusions.
   - **Command to Verify:** `pytest tests/test_dockerfile.py -v`
@@ -458,22 +458,22 @@
   - `docs/DEMO_SCRIPT.md`
   - `docs/PRESENTATION_NOTES.md`
 - **Acceptance Criteria:**
-  - [ ] Covers all 8 presentation slides outlined in Section 7 of the Master Blueprint.
-  - [ ] Details the 3 live demo moments: Web UI DLP scan, Smart Onboarding Copilot, and Antigravity MCP CLI execution.
-  - [ ] Highlights business ROI: 40-60% time savings for BuenaCloud tenant migration and compliance audits.
+  - [x] Covers all 8 presentation slides outlined in Section 7 of the Master Blueprint.
+  - [x] Details the 3 live demo moments: Web UI DLP scan, Smart Onboarding Copilot, and Antigravity MCP CLI execution.
+  - [x] Highlights business ROI: 40-60% time savings for BuenaCloud tenant migration and compliance audits.
 - **TDD Verification Criteria:**
   - **Manual Check:** Review presentation script against 15-minute target duration and live demo commands.
-- **Antigravity Feature / Subagent Assignment:** Main Thread
+  - **Antigravity Feature / Subagent Assignment:** Main Thread
 - **Estimated Scope:** S (2 files)
 
 ---
 
 ### Final Checkpoint: Complete System Validation
-- [ ] Full test suite execution: `pytest tests/ -v --cov=src` with 100% pass rate and >= 90% coverage
-- [ ] Zero-billing execution verified: all services run cleanly offline with synthetic fixtures
-- [ ] MCP server verified: `.agents/mcp_config.json` loads cleanly in Antigravity
-- [ ] Cloud Run container build tested or verified
-- [ ] Artifact Review completed with human engineer (`Ctrl+R`)
+- [x] Full test suite execution: `pytest tests/ -v --cov=src` with 100% pass rate and >= 90% coverage
+- [x] Zero-billing execution verified: all services run cleanly offline with synthetic fixtures
+- [x] MCP server verified: `.agents/mcp_config.json` loads cleanly in Antigravity
+- [x] Cloud Run container build tested or verified
+- [x] Artifact Review completed with human engineer (`Ctrl+R`)
 
 ---
 

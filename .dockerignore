@@ -1,0 +1,34 @@
+# Git and developer metadata
+.git
+.gitignore
+.github
+.agents
+.pytest_cache
+.coverage
+htmlcov
+graphify-out
+
+# Local credentials and secrets (Strict Rule 4 & 5)
+credentials.json
+token.json
+geminiapikey.txt
+.env
+.env.*
+audit_logs.db
+*.sqlite3
+*.db
+
+# Python bytecode and virtual environments
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.venv
+env/
+venv/
+
+# Test suites and development documentation
+tests/
+docs/
+screenshots/
+tasks/

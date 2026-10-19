@@ -44,3 +44,10 @@ def test_audit_logger_redacts_pii(tmp_path):
     
     assert "DE89" not in raw_row_str
     assert "Secret_Contract" in raw_row_str or "doc_secret_44" in raw_row_str
+
+    # Test generic log_event and get_recent_events
+    store.log_event("POLICY_CHECK", "usr_101", "LOW", "hash123456")
+    recent = store.get_recent_events(limit=10)
+    assert len(recent) == 2
+    assert recent[0]["event_type"] == "POLICY_CHECK"
+

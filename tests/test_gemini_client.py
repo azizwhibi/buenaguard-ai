@@ -66,3 +66,39 @@ def test_gemini_client_sanitizes_logs(caplog):
     # Raw IBAN should NOT appear anywhere in the captured logs
     for record in caplog.records:
         assert "DE89370400440532013000" not in record.message
+
+def test_gemini_client_port_methods():
+    """Verify GeminiClassifierPort methods on GeminiClient."""
+    from src.adapters.gemini_client import GeminiClient
+    client = GeminiClient(mock_mode=True)
+    doc_class = client.classify_document("Clean notes without secrets.")
+    assert doc_class["risk_level"] == "LOW"
+
+    doc_class_pii = client.classify_document("Gehalt: 95.000 EUR, IBAN: DE89370400440532013000")
+    assert doc_class_pii["has_pii"] is True
+
+    class Ticket:
+        department = "Finance"
+        jobTitle = "Payroll Accountant"
+    ou_rec = client.recommend_onboarding_ou(Ticket())
+    assert ou_rec["recommended_ou"] == "/Executive_Finance"
+    assert ou_rec["smime_required"] is True
+
+    class EngTicket:
+        department = "Engineering"
+        jobTitle = "Cloud Architect"
+    eng_rec = client.recommend_onboarding_ou(EngTicket())
+    assert eng_rec["recommended_ou"] == "/Engineering"
+
+    class ExtTicket:
+        department = "Contractors"
+        jobTitle = "External Security Consultant"
+    ext_rec = client.recommend_onboarding_ou(ExtTicket())
+    assert ext_rec["recommended_ou"] == "/Contractors"
+
+    class GenTicket:
+        department = "Sales"
+        jobTitle = "Representative"
+    gen_rec = client.recommend_onboarding_ou(GenTicket())
+    assert gen_rec["recommended_ou"] == "/"
+

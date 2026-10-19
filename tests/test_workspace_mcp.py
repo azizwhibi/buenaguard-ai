@@ -54,6 +54,16 @@ async def test_tool_scan_drive_file_dlp():
     assert "DE89 3704 0044 0532 0130 00" not in data["redacted_preview"]
 
 @pytest.mark.anyio
+async def test_tool_scan_drive_file_dlp_drive_fallback():
+    """Verify scan_drive_file_dlp falls back to drive_adapter when file is not in sample_docs fixture."""
+    result = await mcp.call_tool("scan_drive_file_dlp", {"file_id": "doc_notes_002"})
+    assert result.is_error is False
+    content_text = result.content[0].text
+    data = json.loads(content_text) if isinstance(content_text, str) else content_text
+    assert data["file_id"] == "doc_notes_002"
+    assert data["risk_level"] == "LOW"
+
+@pytest.mark.anyio
 async def test_tool_simulate_user_onboarding():
     """Verify simulate_user_onboarding maps role to least-privilege OU and groups."""
     result = await mcp.call_tool("simulate_user_onboarding", {
