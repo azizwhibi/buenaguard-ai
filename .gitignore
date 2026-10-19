@@ -1,0 +1,22 @@
+# API Keys and Sensitive Files
+geminiapikey.txt
+credentials.json
+*apikey*
+*api_key*
+*credential*
+*.pem
+*.key
+*.token
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDE and OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
