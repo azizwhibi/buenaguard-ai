@@ -115,38 +115,55 @@ class GoogleLiveAdapter(WorkspaceDrivePort, WorkspaceSheetsPort):
             logger.error("OAuth flow failed: %s", str(e))
             return False
 
-    def list_drive_files(self) -> List[Dict[str, Any]]:
-        """List files from Google Drive folder or return offline sample documents."""
+    def list_drive_files(self, folder_name: Optional[str] = None) -> List[Dict[str, Any]]:
+        """List files from Google Drive target folder (default: drive_dlp_files) or return offline sample documents."""
+        folder = folder_name or getattr(settings, "GOOGLE_DRIVE_DLP_FOLDER_NAME", "drive_dlp_files")
         if self._ensure_authenticated() and self.drive_service:
             try:
+                # Find the target folder ID (drive_dlp_files)
+                folder_res = self.drive_service.files().list(
+                    q=f"name = '{folder}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
+                    fields="files(id, name)"
+                ).execute()
+                folders = folder_res.get("files", [])
+                
+                query = "trashed = false"
+                if folders:
+                    folder_id = folders[0]["id"]
+                    query = f"'{folder_id}' in parents and trashed = false"
+                elif settings.WORKSPACE_MODE == "LIVE":
+                    # If target folder is specified but not found, do not return random files
+                    logger.warning("Target folder '%s' not found in Google Drive.", folder)
+                    return []
+                
                 results = self.drive_service.files().list(
-                    pageSize=30,
-                    q="trashed = false",
+                    pageSize=50,
+                    q=query,
                     fields="files(id, name, mimeType, permissions, webViewLink)"
                 ).execute()
                 items = results.get("files", [])
-                if items:
-                    files = []
-                    for f in items:
-                        sharing_risk = "DOMAIN_INTERNAL"
-                        perms = f.get("permissions", [])
-                        for p in perms:
-                            if p.get("type") == "anyone":
-                                sharing_risk = "PUBLIC_LINK"
-                                break
-                            elif p.get("role") in ["reader", "commenter", "writer"] and p.get("domain"):
-                                sharing_risk = "EXTERNAL_SHARE"
-                        files.append({
-                            "id": f["id"],
-                            "name": f["name"],
-                            "mimeType": f["mimeType"],
-                            "sharingRisk": sharing_risk,
-                            "webViewLink": f.get("webViewLink")
-                        })
-                    return files
+                files = []
+                for f in items:
+                    sharing_risk = "DOMAIN_INTERNAL"
+                    perms = f.get("permissions", [])
+                    for p in perms:
+                        if p.get("type") == "anyone":
+                            sharing_risk = "PUBLIC_LINK"
+                            break
+                        elif p.get("role") in ["reader", "commenter", "writer"] and p.get("domain"):
+                            sharing_risk = "EXTERNAL_SHARE"
+                    files.append({
+                        "id": f["id"],
+                        "name": f["name"],
+                        "mimeType": f["mimeType"],
+                        "sharingRisk": sharing_risk,
+                        "webViewLink": f.get("webViewLink")
+                    })
+                return files
             except Exception as e:
-                logger.warning("Error querying Google Drive API: %s. Using offline files.", str(e))
+                logger.warning("Error querying Google Drive API: %s.", str(e))
         
+        # Safe fallback when unauthenticated or offline
         return [
             {
                 "id": doc["id"],
@@ -208,13 +225,22 @@ class GoogleLiveAdapter(WorkspaceDrivePort, WorkspaceSheetsPort):
                 }
         return {"is_public": False, "is_external": False, "risk_classification": "DOMAIN_INTERNAL"}
 
-    def read_sheet_rows(self, spreadsheet_id: str, range_name: str = "A1:Z100") -> List[Dict[str, Any]]:
+    def read_sheet_rows(self, spreadsheet_id: Optional[str] = None, range_name: str = "A1:Z100") -> List[Dict[str, Any]]:
         """Read candidate rows from a Google Sheet or return sample onboarding records."""
+        sheet_id = spreadsheet_id or getattr(settings, "GOOGLE_ONBOARDING_SPREADSHEET_ID", "16LPTEw5fk2MS9Jal7stUQwopkWjmQdKhUZbGFqAnzp8")
         if self._ensure_authenticated() and self.sheets_service:
             try:
+                target_range = range_name or "A1:Z100"
+                if target_range == "A1:Z100":
+                    meta = self.sheets_service.spreadsheets().get(spreadsheetId=sheet_id).execute()
+                    sheets = meta.get("sheets", [])
+                    if sheets:
+                        first_title = sheets[0].get("properties", {}).get("title", "Sheet1")
+                        target_range = f"'{first_title}'!A1:Z100"
+                
                 res = self.sheets_service.spreadsheets().values().get(
-                    spreadsheetId=spreadsheet_id,
-                    range=range_name or "A1:Z100"
+                    spreadsheetId=sheet_id,
+                    range=target_range
                 ).execute()
                 values = res.get("values", [])
                 if values and len(values) > 1:
@@ -229,9 +255,9 @@ class GoogleLiveAdapter(WorkspaceDrivePort, WorkspaceSheetsPort):
                     if rows:
                         return rows
             except Exception as e:
-                logger.warning("Live sheet fetch %s failed (%s). Using sample rows.", spreadsheet_id, str(e))
+                logger.warning("Live sheet fetch %s failed (%s).", sheet_id, str(e))
 
-        # Realistic sample German HR onboarding rows
+        # Realistic sample German HR onboarding rows (for offline/test mode)
         return [
             {
                 "fullName": "Maximilian Bauer",

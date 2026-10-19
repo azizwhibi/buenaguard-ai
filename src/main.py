@@ -119,8 +119,8 @@ def onboard_user(request: OnboardingRequest) -> OnboardingResult:
 
 @app.get("/api/v1/drive/files")
 def list_drive_files() -> Any:
-    """Return available Google Drive files (live or offline fallback)."""
-    return drive_adapter.list_drive_files()
+    """Return available Google Drive files from target drive_dlp_files folder."""
+    return drive_adapter.list_drive_files(folder_name=settings.GOOGLE_DRIVE_DLP_FOLDER_NAME)
 
 
 @app.get("/api/v1/auth/google/status")
@@ -144,16 +144,8 @@ def dashboard_view(request: Request):
     if hasattr(drive_adapter, "_ensure_authenticated"):
         drive_adapter._ensure_authenticated()
     is_auth = getattr(drive_adapter, "is_authenticated", False)
-    drive_files = drive_adapter.list_drive_files()
-    sheet_rows = []
-    for f in drive_files:
-        if "spreadsheet" in f.get("mimeType", ""):
-            try:
-                sheet_rows = drive_adapter.read_sheet_rows(f["id"])
-                if sheet_rows:
-                    break
-            except Exception:
-                pass
+    drive_files = drive_adapter.list_drive_files(folder_name=settings.GOOGLE_DRIVE_DLP_FOLDER_NAME)
+    sheet_rows = drive_adapter.read_sheet_rows(spreadsheet_id=settings.GOOGLE_ONBOARDING_SPREADSHEET_ID)
     return templates.TemplateResponse(
         request=request,
         name="index.html",

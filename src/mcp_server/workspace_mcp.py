@@ -72,7 +72,7 @@ def scan_drive_file_dlp(file_id: str) -> str:
     Scan a Google Drive document for European/German PII (IBAN, Steuer-ID, passport, salaries),
     classify GDPR regulatory risk, and return a redacted compliance audit report with zero raw PII.
     """
-    # Safe resolution preventing path traversal
+    # Check fixture first (allows testing and path traversal prevention), then live drive adapter
     fixtures_dir = Path("fixtures/sample_docs").resolve()
     safe_name = Path(file_id).name
     target_path = (fixtures_dir / safe_name).resolve()

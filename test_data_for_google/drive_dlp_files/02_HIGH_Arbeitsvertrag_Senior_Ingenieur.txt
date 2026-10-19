@@ -1,0 +1,27 @@
+ANSTELLUNGSVERTRAG (VERTRAULICH)
+
+Zwischen der BuenaCloud Client Corp (Deutschland) und
+Herrn Lukas Schmidt, geboren am 15.07.1985 in Berlin.
+Reisepass-Nr.: C01X00T4K (Bundesrepublik Deutschland)
+
+§ 1 Tätigkeit und Aufgabenbereich
+Der Mitarbeiter wird als Lead Cloud Infrastructure Architect eingestellt. Zu den Aufgaben gehören die Betreuung der Multi-Cloud-Infrastruktur sowie die Enterprise Workspace Governance.
+
+§ 2 Vergütung und Bankverbindung
+Das jährliche Bruttogehalt beträgt 115.000 EUR, zahlbar in zwölf gleichen Monatsraten.
+Die Auszahlung erfolgt bargeldlos auf das folgende Konto des Mitarbeiters:
+Empfänger: Lukas Schmidt
+IBAN: DE89370400440532013000
+BIC: COBADEFFXXX
+Kreditinstitut: Commerzbank Berlin
+
+§ 3 Steuerliche Erfassung & Sozialversicherung
+Steuer-ID: 41234567890
+Sozialversicherungsnummer: 12 150785 S 004
+Zuständige Krankenkasse: Techniker Krankenkasse (TK)
+
+§ 4 Geheimhaltung und Datenschutz nach DSGVO
+Der Mitarbeiter verpflichtet sich zur strengen Einhaltung der Vorgaben nach Art. 6, 9 und 32 DSGVO.
+
+Berlin, den 01.11.2026
+[Gez. Hannah Weber, CFO]                     [Gez. Lukas Schmidt]

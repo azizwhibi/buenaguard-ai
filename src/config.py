@@ -36,6 +36,16 @@ class Settings(BaseSettings):
         description="Path to stored OAuth refresh token file"
     )
     
+    GOOGLE_ONBOARDING_SPREADSHEET_ID: str = Field(
+        default="16LPTEw5fk2MS9Jal7stUQwopkWjmQdKhUZbGFqAnzp8",
+        description="Google Spreadsheet ID for live HR onboarding candidates"
+    )
+    
+    GOOGLE_DRIVE_DLP_FOLDER_NAME: str = Field(
+        default="drive_dlp_files",
+        description="Google Drive target folder name for DLP file scanning"
+    )
+    
     HOST: str = Field(default="0.0.0.0", description="FastAPI server host")
     PORT: int = Field(default=8000, description="FastAPI server port")
     LOG_LEVEL: str = Field(default="INFO", description="Application log level")

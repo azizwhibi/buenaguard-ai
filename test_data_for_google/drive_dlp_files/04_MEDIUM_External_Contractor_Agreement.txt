@@ -1,0 +1,22 @@
+STATEMENT OF WORK & INDEPENDENT CONTRACTOR AGREEMENT
+
+Client: BuenaCloud Client Enterprise (Germany)
+Contractor: Carlos Mendez (Cybersecurity Consultant)
+Email: c.mendez@buenacloud.de
+Tax Registration: ES-Y88123456K
+
+1. Scope of Engagement
+The Contractor is engaged to conduct external penetration testing against the staging environment.
+All work will be conducted remotely under zero-trust least-privilege access rules.
+
+2. Professional Fees & Remuneration
+Daily consulting rate: 850.00 EUR net.
+Monthly cap: 14,000.00 EUR.
+Payment account details:
+Beneficiary: Carlos Mendez
+IBAN: ES9121000418450200051332
+BIC: CAIXESBBXXX
+
+3. Access Controls
+The Contractor will be provisioned exclusively under the /Contractors Organizational Unit (OU).
+External file sharing is prohibited. Two-Step Verification is strictly enforced.

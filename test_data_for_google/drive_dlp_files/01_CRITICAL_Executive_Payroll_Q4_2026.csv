@@ -1,0 +1,5 @@
+Mitarbeiter_ID,Vollstaendiger_Name,Abteilung,Position,Steuer_ID,IBAN,Monatsgehalt_EUR,Kreditinstitut
+EMP-101,Hannah Weber,Executive_Finance,Chief Financial Officer,11987654321,DE21500500001234567890,14500.00,Deutsche Bank Frankfurt
+EMP-102,Maximilian Bauer,Executive_Finance,Senior Payroll Manager,88451296301,DE89370400440532013000,9200.00,Commerzbank Berlin
+EMP-103,Dr. Markus Vance,Executive_Board,Managing Director DACH,44123890765,DE44500105175407324911,18000.00,HypoVereinsbank Munich
+EMP-104,Sandra Klein,Executive_Finance,Head of Controlling,66901423871,DE75512108001245789632,10500.00,Berliner Sparkasse

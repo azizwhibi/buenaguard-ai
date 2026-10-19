@@ -1,0 +1,7 @@
+fullName,email,department,jobTitle,manager,location,First Name,Last Name,Email,Company,Title,Language,Status
+Hannah Weber,hannah.weber@buenacloud.de,Finance,Chief Financial Officer (CFO),Cezary Augustynowicz,Munich Germany,Hannah,Weber,hannah.weber@buenacloud.de,Finance,Chief Financial Officer,DE,Ready
+Maximilian Bauer,m.bauer@buenacloud.de,Finance,Senior Payroll & Tax Specialist,Hannah Weber,Frankfurt Germany,Maximilian,Bauer,m.bauer@buenacloud.de,Finance,Senior Payroll Specialist,DE,Ready
+Lukas Schmidt,l.schmidt@buenacloud.de,Engineering,Lead Cloud Infrastructure Architect,CTO,Berlin Germany,Lukas,Schmidt,l.schmidt@buenacloud.de,Engineering,Lead Cloud Architect,EN,Ready
+Sophie Becker,s.becker@buenacloud.de,Engineering,Senior Backend Engineer,Lukas Schmidt,Hamburg Germany,Sophie,Becker,s.becker@buenacloud.de,Engineering,Senior Backend Engineer,EN,Ready
+Carlos Mendez,c.mendez@buenacloud.de,Contractors,External Penetration Tester,Lukas Schmidt,Madrid Spain,Carlos,Mendez,c.mendez@buenacloud.de,Contractors,External Pentester,EN,Ready
+Elena Rostova,e.rostova@buenacloud.de,Legal,Corporate Compliance & Data Privacy Officer,Hannah Weber,Munich Germany,Elena,Rostova,e.rostova@buenacloud.de,Legal,Compliance Officer,EN,Ready

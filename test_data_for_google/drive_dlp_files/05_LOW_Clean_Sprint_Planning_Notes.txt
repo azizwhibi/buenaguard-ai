@@ -1,0 +1,17 @@
+WEEKLY ENGINEERING SPRINT PLANNING & ARCHITECTURE SYNC
+
+Date: 20.10.2026
+Attendees: Lukas Schmidt, Sophie Becker, Cloud Team
+Location: Google Meet / Virtual
+
+1. Sprint Goals:
+- Migrate internal container workloads to Google Cloud Run with custom domain mappings.
+- Implement automated Terraform state locking using Cloud Storage buckets.
+- Finalize Prometheus metrics exporter and Grafana dashboard alerting thresholds.
+
+2. Action Items:
+- Lukas: Finalize Dockerfile multi-stage build optimizations.
+- Sophie: Review pull request #142 for database connection pooling.
+- Next sync scheduled for Thursday 10:00 CET.
+
+Status: Clean corporate technical notes. Zero personal data, zero banking details, zero PII.
