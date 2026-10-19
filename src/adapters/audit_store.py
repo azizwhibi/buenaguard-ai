@@ -3,8 +3,9 @@ from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 from src.config import settings
 from src.models.schemas import DLPAuditReport
+from src.ports.workspace_port import AuditStorePort
 
-class AuditStore:
+class AuditStore(AuditStorePort):
     """SQLite-backed, GDPR-compliant audit logger storing SHA-256 hashes and zero raw PII."""
 
     def __init__(self, db_path: Optional[str] = None):
@@ -56,6 +57,24 @@ class AuditStore:
                 ))
         finally:
             conn.close()
+
+    def log_event(self, event_type: str, target_id: str, risk_level: str, content_hash: str) -> None:
+        """Record an audit trail event with SHA-256 hash and zero raw PII."""
+        now = datetime.now(timezone.utc).isoformat()
+        conn = self._get_connection()
+        try:
+            with conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    INSERT INTO audit_logs (timestamp, event_type, target_id, content_hash_sha256, risk_level, summary)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (now, event_type, target_id, content_hash, risk_level, ""))
+        finally:
+            conn.close()
+
+    def get_recent_events(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """Retrieve recent audit events for compliance reporting."""
+        return self.get_recent_audits(limit=limit)
 
     def get_recent_audits(self, limit: int = 50) -> List[Dict[str, Any]]:
         """Retrieve recent audit records formatted as dictionaries."""

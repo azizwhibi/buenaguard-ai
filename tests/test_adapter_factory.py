@@ -17,3 +17,11 @@ def test_factory_switching(monkeypatch):
     drive_adapter = get_drive_adapter()
     assert hasattr(drive_adapter, "list_drive_files")
     assert hasattr(drive_adapter, "get_drive_file_content")
+
+    # 3. AuditStore and GeminiClient factory methods
+    from src.adapters.factory import get_audit_store, get_gemini_client
+    from src.ports.workspace_port import AuditStorePort, GeminiClassifierPort
+    audit_store = get_audit_store()
+    assert isinstance(audit_store, AuditStorePort)
+    gemini_client = get_gemini_client()
+    assert isinstance(gemini_client, GeminiClassifierPort)

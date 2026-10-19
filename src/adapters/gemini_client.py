@@ -4,11 +4,12 @@ import logging
 from typing import Type, TypeVar, Optional, Any, Dict
 from pydantic import BaseModel
 from src.config import settings
+from src.ports.workspace_port import GeminiClassifierPort
 
 T = TypeVar("T", bound=BaseModel)
 logger = logging.getLogger("buenaguard.gemini_client")
 
-class GeminiClient:
+class GeminiClient(GeminiClassifierPort):
     """Wrapper for Google AI Studio Gemini API with structured outputs and zero-billing mock mode."""
 
     def __init__(
@@ -93,3 +94,27 @@ class GeminiClient:
         except Exception:
             # Fallback for models with required fields
             return response_schema.model_construct()
+
+    def classify_document(self, text: str) -> Dict[str, Any]:
+        """Classify document sensitivity and extract DLP violations."""
+        from src.services.pii_prefilter import PIIPreFilter
+        redaction = PIIPreFilter().sanitize(text)
+        return {
+            "has_pii": redaction.has_pii,
+            "detected_types": redaction.detected_types,
+            "risk_level": "CRITICAL" if redaction.has_pii else "LOW"
+        }
+
+    def recommend_onboarding_ou(self, ticket: Any) -> Dict[str, Any]:
+        """Analyze employee ticket and determine least-privilege OU and security flags."""
+        dept = getattr(ticket, "department", "") or ""
+        role = getattr(ticket, "jobTitle", "") or ""
+        dept_l = dept.lower()
+        role_l = role.lower()
+        if "finance" in dept_l or any(k in role_l for k in ["payroll", "tax", "cfo"]):
+            return {"recommended_ou": "/Executive_Finance", "smime_required": True}
+        elif "engineer" in dept_l or any(k in role_l for k in ["engineer", "developer", "cloud"]):
+            return {"recommended_ou": "/Engineering", "smime_required": False}
+        elif "contractor" in dept_l or "consultant" in role_l:
+            return {"recommended_ou": "/Contractors", "smime_required": False}
+        return {"recommended_ou": "/", "smime_required": False}

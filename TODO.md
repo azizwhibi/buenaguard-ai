@@ -243,10 +243,10 @@
   - `src/services/pii_pre_filter.py`
   - `tests/test_pii_pre_filter.py`
 - **Acceptance Criteria:**
-  - [ ] Detects German IBANs (`DE\d{20}`) with checksum validation pattern.
-  - [ ] Detects German tax identification numbers (Steuer-ID 11 digits).
-  - [ ] Tokenizes sensitive strings before any external API transmission or logging.
-  - [ ] Emits zero raw PII to logs.
+  - [x] Detects German IBANs (`DE\d{20}`) with checksum validation pattern.
+  - [x] Detects German tax identification numbers (Steuer-ID 11 digits).
+  - [x] Tokenizes sensitive strings before any external API transmission or logging.
+  - [x] Emits zero raw PII to logs.
 - **TDD Verification Criteria:**
   - **Failing Test First:** `tests/test_pii_pre_filter.py::test_regex_detection_and_redaction` asserting correct detection, token replacement, and clean output strings.
   - **Command to Verify:** `pytest tests/test_pii_pre_filter.py -v`
@@ -262,10 +262,10 @@
   - `src/services/dlp_scanner.py`
   - `tests/test_dlp_scanner.py`
 - **Acceptance Criteria:**
-  - [ ] Evaluates file permissions (flags `anyoneWithLink` and external shares).
-  - [ ] Leverages Gemini 2.5 Flash Structured Outputs to classify `risk_level` (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`) and cite GDPR articles (`Art. 6`, `Art. 9`, `Art. 83`).
-  - [ ] Generates concrete remediation recommendation (e.g. revoke link, move to `/Confidential_OU`).
-  - [ ] Persists scan result to SQLite audit store with file SHA-256 hash.
+  - [x] Evaluates file permissions (flags `anyoneWithLink` and external shares).
+  - [x] Leverages Gemini 2.5 Flash Structured Outputs to classify `risk_level` (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`) and cite GDPR articles (`Art. 6`, `Art. 9`, `Art. 83`).
+  - [x] Generates concrete remediation recommendation (e.g. revoke link, move to `/Confidential_OU`).
+  - [x] Persists scan result to SQLite audit store with file SHA-256 hash.
 - **TDD Verification Criteria:**
   - **Failing Test First:** `tests/test_dlp_scanner.py::test_dlp_scanner_identifies_gdpr_risk_levels` executing on `fixtures/sample_docs/contract_with_iban.txt` and asserting `CRITICAL` risk and remediation advice.
   - **Command to Verify:** `pytest tests/test_dlp_scanner.py -v`
@@ -281,9 +281,9 @@
   - `src/services/security_posture.py`
   - `tests/test_security_posture.py`
 - **Acceptance Criteria:**
-  - [ ] Flags high-risk users (e.g. CFO Hannah Weber in `/Executive_Finance` with `smimeConfigured: false`).
-  - [ ] Flags users lacking 2-Step Verification in enforced OUs.
-  - [ ] Computes weighted compliance score ($0 - 100\%$) and outputs prioritized remediation actions.
+  - [x] Flags high-risk users (e.g. CFO Hannah Weber in `/Executive_Finance` with `smimeConfigured: false`).
+  - [x] Flags users lacking 2-Step Verification in enforced OUs.
+  - [x] Computes weighted compliance score ($0 - 100\%$) and outputs prioritized remediation actions.
 - **TDD Verification Criteria:**
   - **Failing Test First:** `tests/test_security_posture.py::test_security_posture_score_calculation` querying `mock_workspace_users.json` and asserting score computation and identified gaps.
   - **Command to Verify:** `pytest tests/test_security_posture.py -v`
@@ -299,10 +299,10 @@
   - `src/services/onboarding_copilot.py`
   - `tests/test_onboarding_copilot.py`
 - **Acceptance Criteria:**
-  - [ ] Evaluates input candidates (e.g., "Senior Payroll Specialist" -> `/Executive_Finance`, `smime_required: true`).
-  - [ ] Recommends mandatory Google Groups (`finance-team@client-enterprise.de`).
-  - [ ] Calls `provision_user()` on the port to create the account.
-  - [ ] Generates personalized Welcome Security Checklist document.
+  - [x] Evaluates input candidates (e.g., "Senior Payroll Specialist" -> `/Executive_Finance`, `smime_required: true`).
+  - [x] Recommends mandatory Google Groups (`finance-team@client-enterprise.de`).
+  - [x] Calls `provision_user()` on the port to create the account.
+  - [x] Generates personalized Welcome Security Checklist document.
 - **TDD Verification Criteria:**
   - **Failing Test First:** `tests/test_onboarding_copilot.py::test_onboarding_copilot_least_privilege_ou_assignment` asserting correct OU path, group membership, and provisioning call.
   - **Command to Verify:** `pytest tests/test_onboarding_copilot.py -v`
@@ -319,11 +319,11 @@
   - `src/templates/index.html`
   - `tests/test_api_endpoints.py`
 - **Acceptance Criteria:**
-  - [ ] `GET /health` returns status `200 OK` and active mode (`MOCK` or `LIVE`).
-  - [ ] `GET /api/v1/posture` returns tenant compliance score and flagged accounts.
-  - [ ] `POST /api/v1/scan-dlp` accepts a file id and returns structured `DLPAuditReport`.
-  - [ ] `POST /api/v1/onboard` accepts an onboarding request and provisions the user.
-  - [ ] `GET /` serves responsive dashboard with compliance metric cards and scan trigger buttons.
+  - [x] `GET /health` returns status `200 OK` and active mode (`MOCK` or `LIVE`).
+  - [x] `GET /api/v1/posture` returns tenant compliance score and flagged accounts.
+  - [x] `POST /api/v1/scan-dlp` accepts a file id and returns structured `DLPAuditReport`.
+  - [x] `POST /api/v1/onboard` accepts an onboarding request and provisions the user.
+  - [x] `GET /` serves responsive dashboard with compliance metric cards and scan trigger buttons.
 - **TDD Verification Criteria:**
   - **Failing Test First:** `tests/test_api_endpoints.py::test_api_routes` using FastAPI `TestClient` to verify 200 responses and JSON schema output.
   - **Command to Verify:** `pytest tests/test_api_endpoints.py -v`
@@ -333,8 +333,8 @@
 ---
 
 ### Checkpoint: Phase 3 Core Services Checkpoint
-- [ ] All Phase 3 service tests pass: `pytest tests/test_pii_pre_filter.py tests/test_dlp_scanner.py tests/test_security_posture.py tests/test_onboarding_copilot.py tests/test_api_endpoints.py -v`
-- [ ] Verify zero-billing execution: full test suite passes with zero external network dependencies
+- [x] All Phase 3 service tests pass: `pytest tests/test_pii_pre_filter.py tests/test_dlp_scanner.py tests/test_security_posture.py tests/test_onboarding_copilot.py tests/test_api_endpoints.py -v`
+- [x] Verify zero-billing execution: full test suite passes with zero external network dependencies
 - [ ] Review with human before starting Phase 4
 
 ---
