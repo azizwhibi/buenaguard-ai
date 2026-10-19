@@ -92,15 +92,58 @@ class GoogleLiveAdapter(WorkspaceDrivePort, WorkspaceSheetsPort):
         self.is_authenticated = False
         logger.info("GoogleLiveAdapter running in offline / zero-billing fixture mode")
 
+    def _ensure_authenticated(self) -> bool:
+        """Dynamically reload credentials if token.json was generated after startup."""
+        if not self.is_authenticated and os.path.exists(self.token_path):
+            self._initialize_credentials()
+        return self.is_authenticated
+
+    def run_oauth_flow(self, port: int = 0) -> bool:
+        """Run desktop InstalledAppFlow to authorize Google Drive & Sheets and save token.json."""
+        try:
+            from google_auth_oauthlib.flow import InstalledAppFlow
+            if not os.path.exists(self.credentials_path):
+                logger.error("Credentials file %s not found.", self.credentials_path)
+                return False
+            flow = InstalledAppFlow.from_client_secrets_file(self.credentials_path, self.SCOPES)
+            creds = flow.run_local_server(port=port)
+            with open(self.token_path, "w", encoding="utf-8") as token_file:
+                token_file.write(creds.to_json())
+            self._initialize_credentials()
+            return self.is_authenticated
+        except Exception as e:
+            logger.error("OAuth flow failed: %s", str(e))
+            return False
+
     def list_drive_files(self) -> List[Dict[str, Any]]:
         """List files from Google Drive folder or return offline sample documents."""
-        if self.is_authenticated and self.drive_service:
+        if self._ensure_authenticated() and self.drive_service:
             try:
                 results = self.drive_service.files().list(
-                    pageSize=20,
-                    fields="files(id, name, mimeType, permissions)"
+                    pageSize=30,
+                    q="trashed = false",
+                    fields="files(id, name, mimeType, permissions, webViewLink)"
                 ).execute()
-                return results.get("files", [])
+                items = results.get("files", [])
+                if items:
+                    files = []
+                    for f in items:
+                        sharing_risk = "DOMAIN_INTERNAL"
+                        perms = f.get("permissions", [])
+                        for p in perms:
+                            if p.get("type") == "anyone":
+                                sharing_risk = "PUBLIC_LINK"
+                                break
+                            elif p.get("role") in ["reader", "commenter", "writer"] and p.get("domain"):
+                                sharing_risk = "EXTERNAL_SHARE"
+                        files.append({
+                            "id": f["id"],
+                            "name": f["name"],
+                            "mimeType": f["mimeType"],
+                            "sharingRisk": sharing_risk,
+                            "webViewLink": f.get("webViewLink")
+                        })
+                    return files
             except Exception as e:
                 logger.warning("Error querying Google Drive API: %s. Using offline files.", str(e))
         
@@ -116,10 +159,19 @@ class GoogleLiveAdapter(WorkspaceDrivePort, WorkspaceSheetsPort):
 
     def get_drive_file_content(self, file_id: str) -> str:
         """Retrieve plain text content of a Drive file or offline sample content."""
-        if self.is_authenticated and self.drive_service:
+        if self._ensure_authenticated() and self.drive_service:
             try:
-                content_bytes = self.drive_service.files().get_media(fileId=file_id).execute()
-                return content_bytes.decode("utf-8", errors="replace")
+                meta = self.drive_service.files().get(fileId=file_id, fields="id, name, mimeType").execute()
+                mime = meta.get("mimeType", "")
+                if mime == "application/vnd.google-apps.document":
+                    content_bytes = self.drive_service.files().export_media(fileId=file_id, mimeType="text/plain").execute()
+                    return content_bytes.decode("utf-8", errors="replace")
+                elif mime == "application/vnd.google-apps.spreadsheet":
+                    content_bytes = self.drive_service.files().export_media(fileId=file_id, mimeType="text/csv").execute()
+                    return content_bytes.decode("utf-8", errors="replace")
+                else:
+                    content_bytes = self.drive_service.files().get_media(fileId=file_id).execute()
+                    return content_bytes.decode("utf-8", errors="replace")
             except Exception as e:
                 logger.warning("Error fetching live Drive file %s: %s", file_id, str(e))
         
@@ -132,6 +184,20 @@ class GoogleLiveAdapter(WorkspaceDrivePort, WorkspaceSheetsPort):
 
     def get_file_sharing_permissions(self, file_id: str) -> Dict[str, Any]:
         """Inspect file permissions for public or external sharing risks."""
+        if self._ensure_authenticated() and self.drive_service:
+            try:
+                perms_res = self.drive_service.permissions().list(fileId=file_id, fields="permissions(id, type, role, domain)").execute()
+                perms = perms_res.get("permissions", [])
+                is_pub = any(p.get("type") == "anyone" for p in perms)
+                is_ext = any(p.get("type") in ["user", "group", "domain"] and p.get("role") in ["reader", "commenter", "writer"] for p in perms)
+                return {
+                    "is_public": is_pub,
+                    "is_external": is_ext and not is_pub,
+                    "risk_classification": "PUBLIC_LINK" if is_pub else ("EXTERNAL_SHARE" if is_ext else "DOMAIN_INTERNAL")
+                }
+            except Exception as e:
+                logger.warning("Live permission check for %s failed: %s", file_id, str(e))
+
         for doc in self.DEFAULT_OFFLINE_DOCUMENTS:
             if doc["id"] == file_id:
                 risk = doc.get("sharingRisk", "DOMAIN_INTERNAL")
@@ -142,8 +208,29 @@ class GoogleLiveAdapter(WorkspaceDrivePort, WorkspaceSheetsPort):
                 }
         return {"is_public": False, "is_external": False, "risk_classification": "DOMAIN_INTERNAL"}
 
-    def read_sheet_rows(self, spreadsheet_id: str, range_name: str) -> List[Dict[str, Any]]:
+    def read_sheet_rows(self, spreadsheet_id: str, range_name: str = "A1:Z100") -> List[Dict[str, Any]]:
         """Read candidate rows from a Google Sheet or return sample onboarding records."""
+        if self._ensure_authenticated() and self.sheets_service:
+            try:
+                res = self.sheets_service.spreadsheets().values().get(
+                    spreadsheetId=spreadsheet_id,
+                    range=range_name or "A1:Z100"
+                ).execute()
+                values = res.get("values", [])
+                if values and len(values) > 1:
+                    headers = [h.strip() for h in values[0]]
+                    rows = []
+                    for row in values[1:]:
+                        row_dict = {}
+                        for idx, header in enumerate(headers):
+                            val = row[idx] if idx < len(row) else ""
+                            row_dict[header] = val
+                        rows.append(row_dict)
+                    if rows:
+                        return rows
+            except Exception as e:
+                logger.warning("Live sheet fetch %s failed (%s). Using sample rows.", spreadsheet_id, str(e))
+
         # Realistic sample German HR onboarding rows
         return [
             {

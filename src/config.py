@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     )
     
     GEMINI_FALLBACK_MODELS: List[str] = Field(
-        default_factory=lambda: ["gemini-2.0-flash", "gemini-1.5-flash"],
+        default_factory=lambda: ["gemini-3.8-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.0-flash"],
         description="Fallback Gemini models if primary is unavailable"
     )
     

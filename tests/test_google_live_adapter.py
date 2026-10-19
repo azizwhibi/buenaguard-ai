@@ -32,3 +32,23 @@ def test_google_live_adapter_get_file_content_offline():
     content = adapter.get_drive_file_content("mock_doc_101")
     assert isinstance(content, str)
     assert len(content) > 0
+
+def test_google_live_adapter_sharing_permissions_and_sheet_rows():
+    """Verify permission evaluation and sheet rows retrieval in adapter."""
+    from src.adapters.google_live_adapter import GoogleLiveAdapter
+    adapter = GoogleLiveAdapter(credentials_path="nonexistent.json", token_path="nonexistent_token.json")
+    perms = adapter.get_file_sharing_permissions("doc_contract_001")
+    assert perms["is_public"] is True
+    assert perms["risk_classification"] == "PUBLIC_LINK"
+
+    rows = adapter.read_sheet_rows("sheet123", "A1:F10")
+    assert len(rows) >= 3
+    assert rows[0]["fullName"] == "Maximilian Bauer"
+
+def test_google_live_adapter_run_oauth_flow_missing_creds():
+    """Verify run_oauth_flow handles missing credentials file gracefully."""
+    from src.adapters.google_live_adapter import GoogleLiveAdapter
+    adapter = GoogleLiveAdapter(credentials_path="nonexistent_creds.json")
+    result = adapter.run_oauth_flow()
+    assert result is False
+

@@ -97,3 +97,20 @@ def test_onboard_endpoint_validation_error_422():
     response = client.post("/api/v1/onboard", json={})
     assert response.status_code == 422
 
+def test_drive_files_endpoint():
+    response = client.get("/api/v1/drive/files")
+    assert response.status_code == 200
+    files = response.json()
+    assert isinstance(files, list)
+    assert len(files) > 0
+    assert "id" in files[0]
+    assert "name" in files[0]
+
+def test_google_auth_status_endpoint():
+    response = client.get("/api/v1/auth/google/status")
+    assert response.status_code == 200
+    data = response.json()
+    assert "authenticated" in data
+    assert "mode" in data
+    assert "credentials_exists" in data
+

@@ -117,15 +117,51 @@ def onboard_user(request: OnboardingRequest) -> OnboardingResult:
     return onboarding_service.provision_candidate(request)
 
 
+@app.get("/api/v1/drive/files")
+def list_drive_files() -> Any:
+    """Return available Google Drive files (live or offline fallback)."""
+    return drive_adapter.list_drive_files()
+
+
+@app.get("/api/v1/auth/google/status")
+def google_auth_status() -> Dict[str, Any]:
+    """Return current Google OAuth authentication status."""
+    if hasattr(drive_adapter, "_ensure_authenticated"):
+        drive_adapter._ensure_authenticated()
+    is_auth = getattr(drive_adapter, "is_authenticated", False)
+    return {
+        "authenticated": is_auth,
+        "mode": settings.WORKSPACE_MODE,
+        "token_exists": Path(settings.GOOGLE_OAUTH_TOKEN).exists(),
+        "credentials_exists": Path(settings.GOOGLE_OAUTH_CREDENTIALS).exists(),
+    }
+
+
 @app.get("/", response_class=HTMLResponse)
 def dashboard_view(request: Request):
     """Serve responsive Tailwind CSS executive dashboard."""
     posture = posture_service.audit_tenant_posture()
+    if hasattr(drive_adapter, "_ensure_authenticated"):
+        drive_adapter._ensure_authenticated()
+    is_auth = getattr(drive_adapter, "is_authenticated", False)
+    drive_files = drive_adapter.list_drive_files()
+    sheet_rows = []
+    for f in drive_files:
+        if "spreadsheet" in f.get("mimeType", ""):
+            try:
+                sheet_rows = drive_adapter.read_sheet_rows(f["id"])
+                if sheet_rows:
+                    break
+            except Exception:
+                pass
     return templates.TemplateResponse(
         request=request,
         name="index.html",
         context={
             "posture": posture,
             "mode": settings.WORKSPACE_MODE,
+            "is_authenticated": is_auth,
+            "drive_files": drive_files,
+            "sheet_rows": sheet_rows,
         },
     )

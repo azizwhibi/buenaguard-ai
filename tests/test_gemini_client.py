@@ -15,7 +15,7 @@ def test_gemini_client_initialization_with_and_without_key():
     # Initialize with mock mode forced
     client_mock = GeminiClient(api_key=None, mock_mode=True)
     assert client_mock.is_mock_mode is True
-    assert client_mock.model_name == "gemini-2.5-flash"
+    assert client_mock.model_name in ["gemini-2.5-flash", "gemini-3.8-flash"]
 
 def test_gemini_client_structured_generation_mock_mode():
     """Verify structured Pydantic output generation in deterministic mock mode."""

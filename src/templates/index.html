@@ -26,6 +26,11 @@
         </div>
       </div>
       <div class="flex items-center space-x-3">
+        {% if is_authenticated %}
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-950 text-indigo-300 border border-indigo-700" id="badge-google">
+          🟢 Google Live Active
+        </span>
+        {% endif %}
         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800" id="badge-mode">
           ● Mode: {{ mode }}
         </span>
@@ -84,7 +89,7 @@
             <h2 class="text-lg font-bold text-white flex items-center space-x-2">
               <span>🛡️ Google Drive GDPR &amp; DLP Scanner</span>
             </h2>
-            <p class="text-xs text-slate-400">Gemini 2.5 Flash Structured Classification &amp; Regex Pre-screener</p>
+            <p class="text-xs text-slate-400">Gemini 3.8 Flash Structured Classification &amp; Regex Pre-screener</p>
           </div>
           <button id="btn-scan" onclick="triggerDlpScan()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition shadow shadow-indigo-600/30">
             Scan Drive File
@@ -92,12 +97,24 @@
         </div>
 
         <div class="space-y-3">
-          <label class="block text-xs font-medium text-slate-300">Target File ID / Fixture</label>
-          <input type="text" id="target-file-id" value="contract_with_iban.txt" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+          {% if drive_files %}
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Select File from Live Google Drive ({{ drive_files | length }} found)</label>
+            <select id="drive-file-select" onchange="document.getElementById('target-file-id').value = this.value" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 font-mono text-xs">
+              {% for f in drive_files %}
+              <option value="{{ f.id }}">{{ f.name }} [{{ f.sharingRisk }}]</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Target File ID / Fixture Path</label>
+            <input type="text" id="target-file-id" value="{% if drive_files %}{{ drive_files[0].id }}{% else %}contract_with_iban.txt{% endif %}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 font-mono text-xs">
+          </div>
         </div>
 
         <div id="dlp-result" class="p-4 bg-slate-900 rounded-lg border border-slate-700/80 text-xs space-y-2 font-mono">
-          <div class="text-slate-400">// Click "Scan Drive File" to execute GDPR DLP analysis.</div>
+          <div class="text-slate-400">// Select a file and click "Scan Drive File" to execute GDPR DLP analysis.</div>
         </div>
       </div>
 
@@ -114,6 +131,18 @@
             Provision User
           </button>
         </div>
+
+        {% if sheet_rows %}
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Select Candidate from Live Google Sheet ({{ sheet_rows | length }} rows)</label>
+          <select id="sheet-candidate-select" onchange="autofillCandidate(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 text-xs">
+            <option value="">-- Choose Candidate from Sheet 1 --</option>
+            {% for r in sheet_rows %}
+            <option value='{{ r | tojson }}'>{{ r.get('First Name', '') }} {{ r.get('Last Name', '') }} - {{ r.get('Email', r.get('email', '')) }} ({{ r.get('Company', r.get('department', 'Staff')) }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        {% endif %}
 
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -135,10 +164,67 @@
         </div>
 
         <div id="onboard-result" class="p-4 bg-slate-900 rounded-lg border border-slate-700/80 text-xs space-y-2 font-mono">
-          <div class="text-slate-400">// Click "Provision User" to simulate zero-trust provisioning.</div>
+          <div class="text-slate-400">// Select a candidate or enter details and click "Provision User".</div>
         </div>
       </div>
     </div>
+
+    <!-- Live Google Drive Files Audit Table -->
+    {% if drive_files %}
+    <div class="bg-slate-800/70 border border-slate-700 rounded-xl p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+          <span>📁 Live Google Drive Repository &amp; Sharing Risks</span>
+        </h2>
+        <span class="text-xs text-indigo-400 font-mono">{{ drive_files | length }} files synchronized from Google</span>
+      </div>
+      <div class="overflow-x-auto max-h-80 overflow-y-auto">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-900/80 text-slate-400 uppercase font-semibold border-b border-slate-700 sticky top-0">
+            <tr>
+              <th class="px-4 py-3">File Name</th>
+              <th class="px-4 py-3">File ID</th>
+              <th class="px-4 py-3">MIME Type</th>
+              <th class="px-4 py-3">Sharing Risk</th>
+              <th class="px-4 py-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700/60 font-mono">
+            {% for file in drive_files %}
+            <tr class="hover:bg-slate-800/50 transition">
+              <td class="px-4 py-2.5 text-white font-sans font-medium flex items-center space-x-2 truncate max-w-xs">
+                <span>📄</span>
+                <span class="truncate" title="{{ file.name }}">{{ file.name }}</span>
+              </td>
+              <td class="px-4 py-2.5 text-slate-400 text-[11px] truncate max-w-[120px]">{{ file.id }}</td>
+              <td class="px-4 py-2.5 text-slate-400 text-[11px] truncate max-w-[150px]">{{ file.mimeType.split('.')[-1].replace('vnd.google-apps.', '') }}</td>
+              <td class="px-4 py-2.5">
+                {% if file.sharingRisk == 'PUBLIC_LINK' %}
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950 text-rose-300 border border-rose-800">
+                  PUBLIC LINK
+                </span>
+                {% elif file.sharingRisk == 'EXTERNAL_SHARE' %}
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800">
+                  EXTERNAL SHARE
+                </span>
+                {% else %}
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">
+                  DOMAIN INTERNAL
+                </span>
+                {% endif %}
+              </td>
+              <td class="px-4 py-2.5 text-right font-sans">
+                <button onclick="scanSpecificFile('{{ file.id }}')" class="px-2.5 py-1 bg-indigo-600/80 hover:bg-indigo-600 text-white rounded text-[11px] font-medium transition shadow-sm">
+                  Scan DLP
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
 
     <!-- Bottom: Flagged Posture Violations -->
     <div class="bg-slate-800/70 border border-slate-700 rounded-xl p-6 space-y-4">
@@ -184,10 +270,39 @@
       return div.innerHTML;
     }
 
+    function scanSpecificFile(fileId) {
+      const input = document.getElementById('target-file-id');
+      if (input) input.value = fileId;
+      const select = document.getElementById('drive-file-select');
+      if (select) select.value = fileId;
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      triggerDlpScan();
+    }
+
+    function autofillCandidate(candidateJsonStr) {
+      if (!candidateJsonStr) return;
+      try {
+        const c = JSON.parse(candidateJsonStr);
+        const first = c['First Name'] || c['firstName'] || '';
+        const last = c['Last Name'] || c['lastName'] || '';
+        const full = (first + ' ' + last).trim() || c['fullName'] || c['name'] || 'Candidate';
+        const email = c['Email'] || c['email'] || '';
+        const dept = c['Company'] || c['department'] || 'Engineering';
+        const title = c['Title'] || c['jobTitle'] || 'Staff Specialist';
+        
+        document.getElementById('ob-fullname').value = full;
+        document.getElementById('ob-email').value = email;
+        document.getElementById('ob-dept').value = dept;
+        document.getElementById('ob-title').value = title;
+      } catch (err) {
+        console.error('Failed to parse candidate data', err);
+      }
+    }
+
     async function triggerDlpScan() {
       const fileId = document.getElementById('target-file-id').value;
       const resContainer = document.getElementById('dlp-result');
-      resContainer.innerHTML = '<span class="text-indigo-400">Scanning document via PIIPreFilter & Gemini 2.5 Flash...</span>';
+      resContainer.innerHTML = '<span class="text-indigo-400">Scanning document via PIIPreFilter &amp; Gemini 3.8 Flash...</span>';
       try {
         const resp = await fetch('/api/v1/scan-dlp', {
           method: 'POST',
@@ -195,12 +310,13 @@
           body: JSON.stringify({ file_id: fileId })
         });
         const data = await resp.json();
-        const badgeColor = data.risk_level === 'CRITICAL' ? 'text-rose-400' : 'text-amber-400';
+        const badgeColor = data.risk_level === 'CRITICAL' ? 'text-rose-400' : (data.risk_level === 'HIGH' ? 'text-amber-400' : 'text-emerald-400');
         resContainer.innerHTML = `
           <div><span class="text-slate-400">File:</span> <span class="text-white">${escapeHtml(data.file_name)}</span></div>
           <div><span class="text-slate-400">Risk Level:</span> <span class="font-bold ${badgeColor}">${escapeHtml(data.risk_level)}</span></div>
+          <div><span class="text-slate-400">Sharing Risk:</span> <span class="text-slate-200">${escapeHtml(data.sharing_permission_risk || 'N/A')}</span></div>
           <div><span class="text-slate-400">PII Types:</span> <span class="text-slate-200">${escapeHtml((data.pii_types_detected || []).join(', ') || 'None')}</span></div>
-          <div><span class="text-slate-400">GDPR Articles:</span> <span class="text-slate-200">${escapeHtml((data.gdpr_articles_impacted || []).join(', '))}</span></div>
+          <div><span class="text-slate-400">GDPR Articles:</span> <span class="text-slate-200">${escapeHtml((data.gdpr_articles_impacted || []).join(', ') || 'Compliant')}</span></div>
           <div><span class="text-slate-400">Remediation:</span> <span class="text-emerald-400">${escapeHtml(data.recommended_remediation)}</span></div>
           <div class="mt-2 pt-2 border-t border-slate-800"><span class="text-slate-400">Redacted Preview:</span> <pre class="text-[11px] text-slate-400 overflow-x-auto whitespace-pre-wrap">${escapeHtml(data.redacted_preview)}</pre></div>
         `;
@@ -215,7 +331,7 @@
       const department = document.getElementById('ob-dept').value;
       const jobTitle = document.getElementById('ob-title').value;
       const resContainer = document.getElementById('onboard-result');
-      resContainer.innerHTML = '<span class="text-emerald-400">Evaluating least-privilege OU and provisioning user...</span>';
+      resContainer.innerHTML = '<span class="text-emerald-400">Evaluating least-privilege OU via Gemini 3.8 Flash and provisioning user...</span>';
       try {
         const resp = await fetch('/api/v1/onboard', {
           method: 'POST',
