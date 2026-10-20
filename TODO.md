@@ -335,7 +335,7 @@
 ### Checkpoint: Phase 3 Core Services Checkpoint
 - [x] All Phase 3 service tests pass: `pytest tests/test_pii_pre_filter.py tests/test_dlp_scanner.py tests/test_security_posture.py tests/test_onboarding_copilot.py tests/test_api_endpoints.py -v`
 - [x] Verify zero-billing execution: full test suite passes with zero external network dependencies
-- [ ] Review with human before starting Phase 4
+- [x] Review with human before starting Phase 4
 
 ---
 
@@ -386,7 +386,7 @@
 ### Checkpoint: Phase 4 MCP Server Checkpoint
 - [x] All Phase 4 tests pass: `pytest tests/test_workspace_mcp.py tests/test_mcp_config.py -v`
 - [x] MCP stdio handshake validated: server starts and lists tools without error
-- [ ] Review with human before Phase 5
+- [x] Review with human before Phase 5
 
 ---
 
