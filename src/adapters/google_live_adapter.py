@@ -80,6 +80,16 @@ class GoogleLiveAdapter(WorkspaceDrivePort, WorkspaceSheetsPort):
             
             if os.path.exists(self.token_path):
                 creds = Credentials.from_authorized_user_file(self.token_path, self.SCOPES)
+                if creds and not creds.valid and creds.expired and creds.refresh_token:
+                    try:
+                        from google.auth.transport.requests import Request
+                        creds.refresh(Request())
+                        with open(self.token_path, "w", encoding="utf-8") as f:
+                            f.write(creds.to_json())
+                        logger.info("Refreshed expired Google OAuth access token successfully.")
+                    except Exception as ref_err:
+                        logger.warning("Failed to refresh expired OAuth token: %s", str(ref_err))
+
                 if creds and creds.valid:
                     self.drive_service = build("drive", "v3", credentials=creds)
                     self.sheets_service = build("sheets", "v4", credentials=creds)
