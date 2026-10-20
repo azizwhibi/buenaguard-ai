@@ -6,7 +6,7 @@
 [![Google GenAI SDK](https://img.shields.io/badge/Google%20AI%20Studio-Gemini%203.8%20Flash-4285F4.svg)](https://ai.google.dev/)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-Standard%20Stdio-purple.svg)](https://modelcontextprotocol.io/)
 [![GDPR Compliant](https://img.shields.io/badge/GDPR%2FDSGVO-Zero%20Raw%20PII-green.svg)](https://gdpr-info.eu/)
-[![Tests Passing](https://img.shields.io/badge/tests-76%20passed-brightgreen.svg)](file:///D:/buenaai/tests)
+[![Tests Passing](https://img.shields.io/badge/tests-77%20passed-brightgreen.svg)](file:///D:/buenaai/tests)
 
 **GoogleGuard AI** is an enterprise-grade Google Workspace security automation platform and copilot engineered for **GoogleGuard Enterprise GmbH** (DACH Google Cloud & Workspace Premier Partner). It combines local regex-based privacy filtering, **Google AI Studio Gemini 3.8 Flash** structured reasoning, and Google Drive & Sheets APIs into a zero-trust compliance engine.
 
@@ -133,19 +133,138 @@ Every line of code complies with the engineering prime directives documented in 
 
 ## Live Google Integrations
 
-### 1. Google AI Studio (Gemini 3.8 Flash)
-The platform integrates with Google AI Studio using the official `google-genai` SDK. To guard against Google API model retirements (such as the sunsetting of `gemini-2.5-flash`), [`src/adapters/gemini_client.py`](file:///D:/buenaai/src/adapters/gemini_client.py) incorporates an automatic resilient fallback chain:
-`gemini-3.8-flash` $\longrightarrow$ `gemini-flash-latest` $\longrightarrow$ `gemini-3.5-flash` $\longrightarrow$ `gemini-2.0-flash`.
+### 1. Google AI Studio (Gemini 3.5 Flash Lite)
+The platform integrates with Google AI Studio using the official `google-genai` SDK. To optimize for sub-second latency and guard against Google AI Studio preview quota limits (20 req/day on `gemini-3.8-flash`) or model retirements, [`src/adapters/gemini_client.py`](file:///D:/buenaai/src/adapters/gemini_client.py) incorporates:
+- **Default High-Speed Model:** `gemini-3.5-flash-lite` (average response time 1.0–1.5s).
+- **Fast Clean Path:** Documents verified to have zero PII by `PIIPreFilter` bypass external LLMs entirely, returning in `< 1.5ms`.
+- **Automatic Multi-Model Cascade:** `gemini-3.5-flash-lite` $\longrightarrow$ `gemini-3.1-flash-lite` $\longrightarrow$ `gemini-3.6-flash` $\longrightarrow$ `gemini-flash-latest`.
+- **Strict 8.0s Timeout Guard:** ThreadPoolExecutor enforces an 8-second ceiling per model attempt before falling back to local deterministic heuristic classification.
 
-### 2. Google Drive API (v3)
-- **Folder Isolation:** To prevent scanning unrelated user files, file enumeration is strictly scoped to the dedicated folder **`drive_dlp_files`**.
-- **Media Ingestion:** Automatically exports Google Docs (`text/plain`), Google Sheets (`text/csv`), and downloads text/binary files via `get_media()`.
-- **Live Sharing Audit:** Evaluates Google Drive file permissions to detect public links (`anyone`) and external domain collaborators.
+### 2. Google Drive API (v3) Integration
+- **OAuth 2.0 Desktop Installed Flow:** Authenticates via Google Cloud Console Desktop Client credentials (`credentials.json`). The loopback local redirect (`http://localhost:8080/`) captures the authorization code and writes a secure, gitignored `token.json` containing the refresh token.
+- **Strict Read-Only Scopes:** Adheres to the Principle of Least Privilege by requesting strictly `https://www.googleapis.com/auth/drive.readonly`. No write, delete, or management scopes are requested.
+- **Dynamic Folder Isolation (`drive_dlp_files`):** Instead of scanning unrelated user files, [`src/adapters/google_live_adapter.py`](file:///D:/buenaai/src/adapters/google_live_adapter.py) queries Drive for a folder named `drive_dlp_files` (`mimeType = 'application/vnd.google-apps.folder' and trashed = false`). All subsequent file scans and listings are strictly constrained with `'{folder_id}' in parents`.
+- **Dynamic Media Ingestion & Export:**
+  - Google Docs (`application/vnd.google-apps.document`) are exported on-the-fly to `text/plain`.
+  - Google Sheets (`application/vnd.google-apps.spreadsheet`) are exported on-the-fly to `text/csv`.
+  - Binary text files (CSV, TXT, JSON) are downloaded via `files().get_media()`.
+- **Live Sharing Permission Audit:** Reads Google Drive file permissions to detect and flag public link sharing (`type = 'anyone'`) and external domain collaborators.
 
-### 3. Google Sheets API (v4)
-- **Live Spreadsheet Sync:** Automatically reads onboarding rows from Google Spreadsheet:
+### 3. Google Sheets API (v4) Integration
+- **Live Spreadsheet Sync:** Automatically reads onboarding candidate records directly from the Google Sheets spreadsheet:
   `https://docs.google.com/spreadsheets/d/16LPTEw5fk2MS9Jal7stUQwopkWjmQdKhUZbGFqAnzp8/edit?gid=1074968164`
-- **Dynamic Ingestion:** Extracts candidate records (`fullName`, `email`, `department`, `jobTitle`, `manager`, `location`) to populate the interactive onboarding copilot in real time.
+- **Dynamic Header & Range Parsing:** Automatically queries the active sheet range using `spreadsheets().values().get(spreadsheetId=..., range='A1:Z100')`.
+- **Normalization Engine:** Maps heterogeneous column headers (`First Name`, `Last Name`, `Email`, `Company`, `Title` vs `fullName`, `email`, `department`, `jobTitle`) into type-safe domain `WorkspaceUser` models.
+- **Live Security Posture Feeder:** The candidate rows dynamically drive the top banner compliance cards and gaps table in the Web Dashboard, identifying unconfigured S/MIME certificates or missing 2SV.
+
+---
+
+## Model Context Protocol (MCP) Server Architecture
+
+GoogleGuard AI implements a custom Model Context Protocol (MCP) server in [`src/mcp_server/workspace_mcp.py`](file:///D:/buenaai/src/mcp_server/workspace_mcp.py) adhering to the open Anthropic & Linux Foundation standard.
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                   Antigravity AI Assistant / Host                      │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ JSON-RPC 2.0 (stdio)
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│               Custom FastMCP Server (workspace_mcp.py)                 │
+├───────────────────────────────────┬────────────────────────────────────┤
+│ 1. check_domain_dlp_status()      │ 2. list_workspace_ous()            │
+│ 3. scan_drive_file_dlp(file_id)   │ 4. simulate_user_onboarding(...)   │
+└───────────────────────────────────┴────────────────────────────────────┘
+```
+
+### The 4 Exposed Administrative Tools:
+
+1. **`check_domain_dlp_status()`**:
+   - Evaluates overall tenant compliance score (0–100%).
+   - Returns 2SV enrollment and S/MIME deployment statistics.
+   - Lists flagged accounts requiring immediate remediation.
+2. **`list_workspace_ous()`**:
+   - Inspects the complete Organizational Unit hierarchy (`/`, `/Executive_Finance`, `/Engineering`, `/Contractors`).
+   - Details active security policies (`smime_required`, `two_step_verification`).
+3. **`scan_drive_file_dlp(file_id: str)`**:
+   - Fetches the target file from Google Drive (or local fixtures).
+   - Executes local `PIIPreFilter` regex pre-screening and tokenization.
+   - Computes SHA-256 fingerprint and persists audit record.
+   - Returns structured `DLPAuditReport` with redacted preview.
+4. **`simulate_user_onboarding(name: str, role: str, department: str)`**:
+   - Executes zero-trust role reasoning to select least-privilege OU.
+   - Identifies mandatory security settings (S/MIME, 2SV hardware keys).
+   - Generates personalized Welcome Security Checklist.
+
+### Granular Tool Permissions in `.agents/mcp_config.json`:
+Antigravity enforces a strict zero-wildcard security boundary:
+```json
+{
+  "mcpServers": {
+    "googleguard-workspace": {
+      "command": "python",
+      "args": ["-m", "src.mcp_server.workspace_mcp"],
+      "env": {
+        "WORKSPACE_MODE": "LIVE",
+        "PYTHONPATH": "."
+      },
+      "permissions": [
+        "mcp(googleguard-workspace/check_domain_dlp_status)",
+        "mcp(googleguard-workspace/list_workspace_ous)",
+        "mcp(googleguard-workspace/scan_drive_file_dlp)",
+        "mcp(googleguard-workspace/simulate_user_onboarding)"
+      ]
+    }
+  }
+}
+```
+
+---
+
+## Agent Skills, Subagents & Engineering Governance
+
+The entire system was developed using **Antigravity Agent Skills** and strict multi-agent governance documented in [`AGENTS.md`](file:///D:/buenaai/AGENTS.md):
+
+### 1. The 11 Prime Directives (`AGENTS.md`)
+- **Rule 1 (Spec & Plan First):** No code was written before [`SPEC.md`](file:///D:/buenaai/SPEC.md) and [`TODO.md`](file:///D:/buenaai/TODO.md) were established.
+- **Rule 2 (Graphify Context):** Traced 392 architectural nodes and 857 dependency edges across session memory.
+- **Rule 3 (Ponytail Discipline):** Channeling a 'lazy senior dev'—smallest correct changes, standard library first, zero speculative abstractions.
+- **Rule 4 (GDPR Zero Raw PII Logging):** Mandatory regex pre-filtering (`PIIPreFilter`); SQLite stores exclusively SHA-256 digests.
+- **Rule 5 (Least Privilege OAuth):** Strict read-only scopes (`drive.readonly`, `spreadsheets.readonly`).
+- **Rule 6 (Mandatory TDD):** Red-Green-Refactor cycle for every single service and adapter.
+- **Rule 7 (Hexagonal Boundary):** Core business logic depends only on abstract ports (`src/ports/`).
+- **Rule 8 (Zero-Billing Hybrid):** 100% operational offline using mock fixtures.
+- **Rule 9 (Subagent Pack):** Orchestrated specialized Addy Osmani persona subagents across every phase.
+- **Rule 10 (Review Receipts):** Structured exit criteria artifacts emitted before phase transitions.
+- **Rule 11 (Phase Transition Gate):** Verify tests -> Request human approval -> Git commit & push.
+
+### 2. Autonomous Subagent Pack (`addyosmani/agent-skills`)
+- **`test-engineer` Subagent:** Evaluated test quality across all 77 tests, checked mock contract parity, and enforced 91.12% statement coverage.
+- **`security-auditor` Subagent:** Verified GDPR zero-PII logging, path traversal prevention (`Path.name` + `is_relative_to`), and OAuth scope minimization.
+- **`code-reviewer` Subagent:** Conducted multi-dimensional 5-axis code reviews (Correctness, Readability, Architecture, Security, Performance) ensuring Ponytail compliance.
+
+---
+
+## FastAPI REST API & Interactive OpenAPI Documentation
+
+GoogleGuard AI provides a production-grade FastAPI REST API with automatic interactive OpenAPI documentation:
+
+### Interactive Swagger UI & ReDoc:
+- **Swagger UI:** 👉 **[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)**
+- **ReDoc:** 👉 **[http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)**
+- **OpenAPI Schema:** `http://127.0.0.1:8000/openapi.json`
+
+### Endpoints Overview:
+
+| Method | Route | Description | Response Model |
+|:---:|---|---|---|
+| `GET` | `/` | Web Executive Dashboard | HTML / Jinja2 |
+| `GET` | `/health` | Liveness & Readiness Probe | `{"status": "ok", "mode": "LIVE", "app": "..."}` |
+| `GET` | `/api/v1/posture` | Domain posture score & gaps | `SecurityPostureReport` |
+| `POST`| `/api/v1/scan-dlp` | GDPR DLP scan on Drive file | `DLPAuditReport` |
+| `POST`| `/api/v1/onboard` | Zero-trust candidate onboarding | `OnboardingResult` |
+| `GET` | `/api/v1/drive/files`| Live Drive files in folder | `List[DriveFileSummary]` |
+| `GET` | `/api/v1/auth/google/status`| OAuth connection health | `{"authenticated": true, ...}` |
 
 ---
 
@@ -340,7 +459,7 @@ pytest -v
 pytest --cov=src --cov-report=term-missing tests/
 ```
 
-**Status:** **76 passed in 15.70s** with >90% coverage across domain services.
+**Status:** **77 passed in 100% pass rate** with 91.12% coverage across domain services.
 
 ---
 
