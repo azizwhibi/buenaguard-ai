@@ -6,7 +6,7 @@ from typing import List, Optional, Dict, Any
 from src.ports.workspace_port import WorkspaceAdminPort
 from src.models.schemas import WorkspaceUser, OrgUnit, DLPRule
 
-logger = logging.getLogger("buenaguard.mock_admin_adapter")
+logger = logging.getLogger("googleguard.mock_admin_adapter")
 
 class MockAdminAdapter(WorkspaceAdminPort):
     """

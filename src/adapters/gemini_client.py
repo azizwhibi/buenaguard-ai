@@ -7,7 +7,7 @@ from src.config import settings
 from src.ports.workspace_port import GeminiClassifierPort
 
 T = TypeVar("T", bound=BaseModel)
-logger = logging.getLogger("buenaguard.gemini_client")
+logger = logging.getLogger("googleguard.gemini_client")
 
 class GeminiClient(GeminiClassifierPort):
     """Wrapper for Google AI Studio Gemini API with structured outputs and zero-billing mock mode."""
@@ -116,7 +116,7 @@ class GeminiClient(GeminiClassifierPort):
                 remediation: str = ""
 
             prompt = (
-                "You are an expert Google Workspace Data Loss Prevention and GDPR compliance auditor for BuenaCloud GmbH.\n"
+                "You are an expert Google Workspace Data Loss Prevention and GDPR compliance auditor for GoogleGuard Enterprise GmbH.\n"
                 "Analyze the following sanitized document text (where sensitive values like IBANs and Tax IDs are pre-tokenized):\n\n"
                 f"--- BEGIN DOCUMENT ---\n{redaction.sanitized_text[:2000]}\n--- END DOCUMENT ---\n\n"
                 "Identify any remaining sensitive customer secrets, financial data, or compliance risks.\n"
@@ -179,7 +179,7 @@ class GeminiClient(GeminiClassifierPort):
                 reasoning: str = ""
 
             prompt = (
-                "You are BuenaGuard AI's zero-trust HR onboarding copilot for BuenaCloud GmbH.\n"
+                "You are GoogleGuard AI's zero-trust HR onboarding copilot for GoogleGuard Enterprise GmbH.\n"
                 f"Candidate Department: {dept}\n"
                 f"Candidate Role / Job Title: {role}\n\n"
                 "Organizational Units:\n"

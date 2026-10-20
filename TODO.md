@@ -1,9 +1,9 @@
-# BuenaGuard AI: Phased Execution Roadmap & TDD Task Breakdown
+# GoogleGuard AI: Phased Execution Roadmap & TDD Task Breakdown
 
-**Project Name:** BuenaGuard AI — Automated Google Workspace DLP, S/MIME & Onboarding Copilot  
-**Target Organization:** BuenaCloud GmbH (Cezary Augustynowicz & CTO)  
+**Project Name:** GoogleGuard AI — Automated Google Workspace DLP, S/MIME & Onboarding Copilot  
+**Target Organization:** GoogleGuard Enterprise GmbH (Cezary Augustynowicz & CTO)  
 **Methodology:** Antigravity Agent Skills (`spec-driven-development`, `planning-and-task-breakdown`, `test-driven-development`, `incremental-implementation`)  
-**Single Source of Truth:** [buenaguard_ai_master_specification_plan.md](file:///D:/buenaai/buenaguard_ai_master_specification_plan.md) / [plan.md](file:///D:/buenaai/plan.md)  
+**Single Source of Truth:** [googleguard_ai_master_specification_plan.md](file:///D:/buenaai/googleguard_ai_master_specification_plan.md) / [plan.md](file:///D:/buenaai/plan.md)  
 **Technical Specification:** [SPEC.md](file:///D:/buenaai/SPEC.md)  
 **Status:** Ready for Human Review (`Ctrl+R` Artifact Review Screen)
 
@@ -293,7 +293,7 @@
 ---
 
 ### Task [P3-T4]: Gemini Zero-Trust HR Onboarding Copilot
-**Description:** Implement `src/services/onboarding_copilot.py` reading candidate onboarding rows, evaluating role & department against BuenaCloud's OU tree using Gemini 2.5 Flash, assigning least-privilege OU/groups, provisioning the user, and generating an onboarding checklist.
+**Description:** Implement `src/services/onboarding_copilot.py` reading candidate onboarding rows, evaluating role & department against GoogleGuard Enterprise's OU tree using Gemini 2.5 Flash, assigning least-privilege OU/groups, provisioning the user, and generating an onboarding checklist.
 - **Dependencies:** `[P2-T3]`, `[P1-T3]`, `[P2-T2]`
 - **Files to Create/Modify:**
   - `src/services/onboarding_copilot.py`
@@ -362,18 +362,18 @@
 ---
 
 ### Task [P4-T2]: Antigravity Workspace MCP Configuration & Granular Tool Permissions
-**Description:** Create `.agents/mcp_config.json` registering `buenaguard-workspace` with Antigravity, specifying command, arguments, environment variables, and strict granular `mcp(server/tool)` permissions.
+**Description:** Create `.agents/mcp_config.json` registering `googleguard-workspace` with Antigravity, specifying command, arguments, environment variables, and strict granular `mcp(server/tool)` permissions.
 - **Dependencies:** `[P4-T1]`
 - **Files to Create/Modify:**
   - `.agents/mcp_config.json`
   - `tests/test_mcp_config.py`
 - **Acceptance Criteria:**
-  - [x] Config defines `buenaguard-workspace` running `python src/mcp_server/workspace_mcp.py` with `PYTHONPATH=.`.
+  - [x] Config defines `googleguard-workspace` running `python src/mcp_server/workspace_mcp.py` with `PYTHONPATH=.`.
   - [x] Config includes granular permission allowlist:
-    - `mcp(buenaguard-workspace/check_domain_dlp_status)`
-    - `mcp(buenaguard-workspace/list_workspace_ous)`
-    - `mcp(buenaguard-workspace/scan_drive_file_dlp)`
-    - `mcp(buenaguard-workspace/simulate_user_onboarding)`
+    - `mcp(googleguard-workspace/check_domain_dlp_status)`
+    - `mcp(googleguard-workspace/list_workspace_ous)`
+    - `mcp(googleguard-workspace/scan_drive_file_dlp)`
+    - `mcp(googleguard-workspace/simulate_user_onboarding)`
   - [x] Config adheres strictly to Antigravity MCP JSON schema.
 - **TDD Verification Criteria:**
   - **Failing Test First:** `tests/test_mcp_config.py::test_mcp_config_schema_and_permissions` validating JSON format, required keys, and valid command path.
@@ -452,7 +452,7 @@
 ---
 
 ### Task [P5-T4]: Sunday Presentation Deck & Live Demo Script
-**Description:** Author `docs/DEMO_SCRIPT.md` and `docs/PRESENTATION_NOTES.md` structuring the 15-minute presentation arc for Cezary Augustynowicz and BuenaCloud leadership, including Antigravity skill evidence, subagent logs, and live demo commands.
+**Description:** Author `docs/DEMO_SCRIPT.md` and `docs/PRESENTATION_NOTES.md` structuring the 15-minute presentation arc for Cezary Augustynowicz and GoogleGuard Enterprise leadership, including Antigravity skill evidence, subagent logs, and live demo commands.
 - **Dependencies:** `[P5-T3]`
 - **Files to Create/Modify:**
   - `docs/DEMO_SCRIPT.md`
@@ -460,7 +460,7 @@
 - **Acceptance Criteria:**
   - [x] Covers all 8 presentation slides outlined in Section 7 of the Master Blueprint.
   - [x] Details the 3 live demo moments: Web UI DLP scan, Smart Onboarding Copilot, and Antigravity MCP CLI execution.
-  - [x] Highlights business ROI: 40-60% time savings for BuenaCloud tenant migration and compliance audits.
+  - [x] Highlights business ROI: 40-60% time savings for GoogleGuard Enterprise tenant migration and compliance audits.
 - **TDD Verification Criteria:**
   - **Manual Check:** Review presentation script against 15-minute target duration and live demo commands.
   - **Antigravity Feature / Subagent Assignment:** Main Thread
@@ -490,4 +490,4 @@
 
 ## Open Questions & Human Input
 1. **Gemini Model Designation:** The blueprint targets `gemini-2.5-flash` via Google AI Studio. Should we also add `gemini-1.5-flash` or `gemini-2.0-flash` as an automatic fallback if 2.5 is unavailable in certain regions?
-2. **Dashboard UI Preference:** The plan provides a lightweight FastAPI + Tailwind CSS CDN dashboard for the live demo. Would you like any specific BuenaCloud branding or logo assets included?
+2. **Dashboard UI Preference:** The plan provides a lightweight FastAPI + Tailwind CSS CDN dashboard for the live demo. Would you like any specific GoogleGuard Enterprise branding or logo assets included?

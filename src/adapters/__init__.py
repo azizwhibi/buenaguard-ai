@@ -1,1 +1,1 @@
-"""BuenaGuard AI Adapters (Hexagonal Architecture)"""
+"""GoogleGuard AI Adapters (Hexagonal Architecture)"""

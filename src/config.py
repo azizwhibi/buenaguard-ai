@@ -4,7 +4,7 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    """Application settings for BuenaGuard AI with zero-billing defaults."""
+    """Application settings for GoogleGuard AI with zero-billing defaults."""
     
     WORKSPACE_MODE: Literal["MOCK", "LIVE"] = Field(
         default="MOCK",

@@ -1,7 +1,7 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: buenaguard-ai
+  name: googleguard-ai
   labels:
     cloud.googleapis.com/location: europe-west3
   annotations:
@@ -17,7 +17,7 @@ spec:
       containerConcurrency: 80
       timeoutSeconds: 300
       containers:
-        - image: gcr.io/buenacloud-prod/buenaguard-ai:latest
+        - image: gcr.io/googleguard-prod/googleguard-ai:latest
           ports:
             - name: http1
               containerPort: 8080

@@ -80,7 +80,7 @@ def test_dashboard_html_endpoint():
     response = client.get("/")
     assert response.status_code == 200
     assert "text/html" in response.headers.get("content-type", "")
-    assert "BuenaGuard AI" in response.text
+    assert "GoogleGuard AI" in response.text
     # Verify security headers
     assert response.headers.get("x-content-type-options") == "nosniff"
     assert response.headers.get("x-frame-options") == "DENY"

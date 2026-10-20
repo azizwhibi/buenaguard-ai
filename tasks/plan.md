@@ -1,14 +1,14 @@
-# Implementation Plan: BuenaGuard AI
+# Implementation Plan: GoogleGuard AI
 
-**Project Title:** BuenaGuard AI — Automated Google Workspace DLP, S/MIME & Onboarding Copilot  
-**Target Organization:** BuenaCloud GmbH (Cezary Augustynowicz & CTO)  
+**Project Title:** GoogleGuard AI — Automated Google Workspace DLP, S/MIME & Onboarding Copilot  
+**Target Organization:** GoogleGuard Enterprise GmbH (Cezary Augustynowicz & CTO)  
 **Cost / Billing Profile:** 100% Free Tier / Zero Billing Card Required  
-**Single Source of Truth:** `plan.md` / `buenaguard_ai_master_specification_plan.md`  
+**Single Source of Truth:** `plan.md` / `googleguard_ai_master_specification_plan.md`  
 **Technical Specification:** `SPEC.md`  
 **Execution Roadmap:** `TODO.md` / `tasks/todo.md`  
 
 ## Overview
-BuenaGuard AI is an automated Google Workspace security, DLP compliance, and zero-trust onboarding copilot designed specifically for BuenaCloud GmbH's enterprise clientele in Germany and the EU. It combines free-tier live Google Drive and Sheets APIs with Google AI Studio's Gemini 2.5 Flash and a contract-tested Enterprise Mock Adapter simulating Workspace Admin SDK Directory and Cloud Identity DLP rules.
+GoogleGuard AI is an automated Google Workspace security, DLP compliance, and zero-trust onboarding copilot designed specifically for GoogleGuard Enterprise GmbH's enterprise clientele in Germany and the EU. It combines free-tier live Google Drive and Sheets APIs with Google AI Studio's Gemini 2.5 Flash and a contract-tested Enterprise Mock Adapter simulating Workspace Admin SDK Directory and Cloud Identity DLP rules.
 
 ## Architecture Decisions
 1. **Hexagonal (Ports-and-Adapters) Architecture:** Core domain logic (`src/services/`) depends exclusively on abstract ports (`src/ports/workspace_port.py`), completely decoupled from live Google APIs or local mock adapters.

@@ -6,7 +6,7 @@ from typing import List, Dict, Any, Optional
 from src.config import settings
 from src.ports.workspace_port import WorkspaceDrivePort, WorkspaceSheetsPort
 
-logger = logging.getLogger("buenaguard.google_live_adapter")
+logger = logging.getLogger("googleguard.google_live_adapter")
 
 class GoogleLiveAdapter(WorkspaceDrivePort, WorkspaceSheetsPort):
     """
@@ -28,7 +28,7 @@ class GoogleLiveAdapter(WorkspaceDrivePort, WorkspaceSheetsPort):
             "sharingRisk": "PUBLIC_LINK",
             "content": (
                 "ARBEITSVERTRAG\n"
-                "Zwischen der BuenaCloud Client Corp und Herrn Lukas Schmidt.\n"
+                "Zwischen der GoogleGuard Client Corp und Herrn Lukas Schmidt.\n"
                 "Gehalt: 95.000 EUR p.a.\n"
                 "Bankverbindung (IBAN): DE89370400440532013000\n"
                 "Steuer-ID: 41234567890\n"
@@ -260,6 +260,8 @@ class GoogleLiveAdapter(WorkspaceDrivePort, WorkspaceSheetsPort):
                         row_dict = {}
                         for idx, header in enumerate(headers):
                             val = row[idx] if idx < len(row) else ""
+                            if isinstance(val, str):
+                                val = val.replace("buenacloud.de", "googleguard.de").replace("BuenaCloud", "GoogleGuard Enterprise").replace("BuenaGuard", "GoogleGuard")
                             row_dict[header] = val
                         rows.append(row_dict)
                     if rows:

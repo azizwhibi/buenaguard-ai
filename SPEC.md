@@ -1,24 +1,24 @@
-# BuenaGuard AI: Technical Specification (SPEC.md)
+# GoogleGuard AI: Technical Specification (SPEC.md)
 
-**Project Title:** BuenaGuard AI — Automated Google Workspace DLP, S/MIME & Onboarding Copilot  
+**Project Title:** GoogleGuard AI — Automated Google Workspace DLP, S/MIME & Onboarding Copilot  
 **Author / Lead:** Antigravity AI Engineering Assistant  
-**Stakeholder Audience:** BuenaCloud GmbH Technical Leadership (Cezary Augustynowicz, CTO)  
+**Stakeholder Audience:** GoogleGuard Enterprise GmbH Technical Leadership (Cezary Augustynowicz, CTO)  
 **Specification Version:** 1.0.0 (Gated Spec Phase)  
-**Reference Document:** `plan.md` (`buenaguard_ai_master_specification_plan.md`)  
+**Reference Document:** `plan.md` (`googleguard_ai_master_specification_plan.md`)  
 
 ---
 
 ## 1. Objective & Business Value
 
-BuenaGuard AI is an enterprise-grade security, DLP compliance, and zero-trust onboarding copilot tailored for Google Workspace tenants managed by BuenaCloud GmbH.
+GoogleGuard AI is an enterprise-grade security, DLP compliance, and zero-trust onboarding copilot tailored for Google Workspace tenants managed by GoogleGuard Enterprise GmbH.
 
 ### Key Pain Points Solved
 1. **Shadow Data & GDPR/DSGVO Non-Compliance:** Unencrypted PII (German IBANs, Tax IDs/Steuer-ID, employment agreements) stored in Google Drive folders with public or over-permissive sharing links, and sensitive email communications without S/MIME encryption.
 2. **Over-Privileged Manual Onboarding:** Delay and human error during new hire provisioning in Google Workspace Admin Console, causing new hires to be assigned broad root OU permissions instead of least-privilege Organizational Units and dedicated Google Groups.
 
 ### Target Personas & Primary Workflows
-* **BuenaCloud Security Engineer / Tenant Admin:** Reviews domain security posture score ($0 - 100\%$), identifies users in sensitive OUs missing S/MIME or 2-Step Verification (2SV), and enforces automated remediation via Antigravity MCP tools or FastAPI dashboard.
-* **HR & Operations Specialist:** Submits new hire records via Google Sheets or REST API; BuenaGuard evaluates role requirements using Gemini 2.5 Flash Structured Outputs and provisions users into the exact least-privilege OU with mandatory security controls.
+* **GoogleGuard Enterprise Security Engineer / Tenant Admin:** Reviews domain security posture score ($0 - 100\%$), identifies users in sensitive OUs missing S/MIME or 2-Step Verification (2SV), and enforces automated remediation via Antigravity MCP tools or FastAPI dashboard.
+* **HR & Operations Specialist:** Submits new hire records via Google Sheets or REST API; GoogleGuard evaluates role requirements using Gemini 2.5 Flash Structured Outputs and provisions users into the exact least-privilege OU with mandatory security controls.
 * **Compliance Officer (DSGVO/GDPR):** Receives automated, redacted DLP audit reports without exposing raw employee or customer PII in logs or storage.
 
 ---
@@ -97,8 +97,8 @@ flake8 src/ tests/
 black --check src/ tests/
 
 # Docker Build & Run (Cloud Run Simulation)
-docker build -t buenaguard-ai .
-docker run -p 8080:8080 -e PORT=8080 --env-file .env buenaguard-ai
+docker build -t googleguard-ai .
+docker run -p 8080:8080 -e PORT=8080 --env-file .env googleguard-ai
 ```
 
 ---
@@ -172,7 +172,7 @@ buenaai/
 │   └── test_dockerfile.py
 ├── docs/
 │   ├── DEMO_SCRIPT.md               # 15-minute presentation & demo walk-through
-│   ├── PRESENTATION_NOTES.md        # Talking points for BuenaCloud leadership
+│   ├── PRESENTATION_NOTES.md        # Talking points for GoogleGuard Enterprise leadership
 │   └── screenshots/                 # Antigravity artifacts, skills, and MCP evidence
 ├── AGENTS.md                        # Antigravity governance rules & security contract
 ├── SPEC.md                          # This specification document
@@ -258,6 +258,6 @@ class DLPAuditReport(BaseModel):
 - [ ] Complete test suite (`tests/`) passes cleanly with 0 failures: `pytest tests/ -v`.
 - [ ] 100% free-tier zero-billing setup confirmed: application boots in both `MOCK` and `LIVE` modes.
 - [ ] Gemini 2.5 Flash Structured Outputs successfully classify German PII and map least-privilege OUs.
-- [ ] Custom stdio MCP server (`buenaguard-workspace`) connects cleanly to Antigravity and executes all 4 administrative tools.
+- [ ] Custom stdio MCP server (`googleguard-workspace`) connects cleanly to Antigravity and executes all 4 administrative tools.
 - [ ] Docker container builds cleanly and satisfies Google Cloud Run runtime contract (`PORT=8080`, `/health` 200 OK).
-- [ ] Executive presentation and live demo script documented for Sunday demonstration to BuenaCloud leadership.
+- [ ] Executive presentation and live demo script documented for Sunday demonstration to GoogleGuard Enterprise leadership.

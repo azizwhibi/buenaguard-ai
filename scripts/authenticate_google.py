@@ -16,7 +16,7 @@ def main():
         sys.exit(1)
         
     print("========================================================", flush=True)
-    print("BuenaGuard AI: Live Google Drive & Sheets Authentication", flush=True)
+    print("GoogleGuard AI: Live Google Drive & Sheets Authentication", flush=True)
     print("========================================================", flush=True)
     
     flow = InstalledAppFlow.from_client_secrets_file(creds_path, SCOPES)

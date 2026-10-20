@@ -1,1 +1,1 @@
-"""BuenaGuard AI Test Suite"""
+"""GoogleGuard AI Test Suite"""

@@ -1,8 +1,8 @@
-# BuenaGuard AI: 15-Minute Executive Demo Script
+# GoogleGuard AI: 15-Minute Executive Demo Script
 
-**Audience:** Cezary Augustynowicz (CTO) & BuenaCloud GmbH Leadership  
+**Audience:** Cezary Augustynowicz (CTO) & GoogleGuard Enterprise GmbH Leadership  
 **Presenter:** AI Engineering Candidate  
-**Project:** BuenaGuard AI (Google Workspace Security, DLP & Onboarding Copilot)  
+**Project:** GoogleGuard AI (Google Workspace Security, DLP & Onboarding Copilot)  
 **Target Duration:** 15 Minutes (12 min Presentation & Demo + 3 min Q&A)  
 
 ---
@@ -11,7 +11,7 @@
 
 ```
 [00:00 - 01:30] Slide 1: Introduction & Connection to Interview 1
-[01:30 - 03:00] Slide 2: Understanding BuenaCloud’s Enterprise Workspace Domain
+[01:30 - 03:00] Slide 2: Understanding GoogleGuard Enterprise’s Enterprise Workspace Domain
 [03:00 - 05:00] Slide 3: Hexagonal Architecture & Zero-Billing Hybrid Strategy
 [05:00 - 07:00] Slide 4: Antigravity Governance (AGENTS.md & Addy Osmani Skills)
 [07:00 - 08:30] Slide 5: Autonomous Subagent Pack & Verification Loops
@@ -26,15 +26,15 @@
 
 ### Slide 1: Introduction & Connection to Interview 1 (1.5 min)
 * **Speaker Script:**
-  > *"Guten Tag Cezary and BuenaCloud team. In our first conversation, you challenged me on how modern agentic AI can interface with Google Cloud and Google Workspace Enterprise, and asked how I leverage Google Antigravity in real production workflows.
-  > Today, I am proud to present **BuenaGuard AI**—an enterprise Google Workspace Security, DLP, and Onboarding Copilot built completely from scratch using Antigravity's advanced architectural orchestration."*
-* **Key Visual:** BuenaGuard AI logo, tagline, and project repository overview.
+  > *"Guten Tag Cezary and GoogleGuard Enterprise team. In our first conversation, you challenged me on how modern agentic AI can interface with Google Cloud and Google Workspace Enterprise, and asked how I leverage Google Antigravity in real production workflows.
+  > Today, I am proud to present **GoogleGuard AI**—an enterprise Google Workspace Security, DLP, and Onboarding Copilot built completely from scratch using Antigravity's advanced architectural orchestration."*
+* **Key Visual:** GoogleGuard AI logo, tagline, and project repository overview.
 
 ---
 
-### Slide 2: Understanding BuenaCloud’s Enterprise Workspace Domain (1.5 min)
+### Slide 2: Understanding GoogleGuard Enterprise’s Enterprise Workspace Domain (1.5 min)
 * **Speaker Script:**
-  > *"For BuenaCloud’s enterprise clients, Google Workspace is not just email—it is the core identity and security perimeter. In regulated German and European markets, four pillars dictate security:
+  > *"For GoogleGuard Enterprise’s enterprise clients, Google Workspace is not just email—it is the core identity and security perimeter. In regulated German and European markets, four pillars dictate security:
   > 1. **Organizational Unit (OU) Policies:** Strict segregation between Executive Finance, Engineering, and Contractors.
   > 2. **S/MIME Email Encryption:** Non-negotiable for CFOs and finance staff handling payroll and banking.
   > 3. **2-Step Verification (2SV):** Hardware security key enforcement.
@@ -44,7 +44,7 @@
 
 ### Slide 3: Hexagonal Architecture & Zero-Billing Hybrid Strategy (2 min)
 * **Speaker Script:**
-  > *"To ensure this solution is robust, testable, and zero-cost during development, I architected BuenaGuard AI using strict Hexagonal (Ports & Adapters) principles:
+  > *"To ensure this solution is robust, testable, and zero-cost during development, I architected GoogleGuard AI using strict Hexagonal (Ports & Adapters) principles:
   > - **Domain Core (`src/services/`):** Pure Python business logic (`DLPScannerService`, `SecurityPostureService`, `OnboardingCopilotService`) depending strictly on abstract ports (`src/ports/`).
   > - **Zero-Billing Hybrid Engine:** In development mode (`WORKSPACE_MODE=MOCK`), it runs 100% offline using contract-tested fixtures simulating Google Admin SDK Directory and Cloud Identity DLP APIs.
   > - **Live Google APIs:** Seamlessly connects to live Google Drive, Sheets, and Google AI Studio Gemini 2.5 Flash when credentials are present, falling back gracefully without crashing."*
@@ -115,8 +115,8 @@
 
 ### Slide 8: Enterprise Business ROI & Engineering Acceleration (2 min)
 * **Speaker Script:**
-  > *"BuenaGuard AI delivers measurable business impact for BuenaCloud:
+  > *"GoogleGuard AI delivers measurable business impact for GoogleGuard Enterprise:
   > - **40% to 60% reduction** in client tenant migration and onboarding setup time.
   > - **100% automated GDPR compliance auditing** for Google Drive and Gmail.
   > - **Zero cloud billing dependencies** during development and testing.
-  > - **Reusable Antigravity Skills & MCP servers** that BuenaCloud engineers can leverage across client engagements."*
+  > - **Reusable Antigravity Skills & MCP servers** that GoogleGuard Enterprise engineers can leverage across client engagements."*

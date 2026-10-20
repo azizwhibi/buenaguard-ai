@@ -1,4 +1,4 @@
-"""BuenaGuard AI Port Interfaces (Hexagonal Architecture)."""
+"""GoogleGuard AI Port Interfaces (Hexagonal Architecture)."""
 from src.ports.workspace_port import (
     WorkspaceAdminPort,
     WorkspaceDrivePort,

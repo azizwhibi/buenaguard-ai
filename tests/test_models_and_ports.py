@@ -42,18 +42,18 @@ def test_models_import_and_validation():
     # 3. OnboardingTicket
     ticket = OnboardingTicket(
         candidate_name="Lukas Weber",
-        email="lukas.weber@buenacloud.de",
+        email="lukas.weber@googleguard.de",
         role="DevOps Engineer",
         department="Engineering",
-        manager_email="cto@buenacloud.de",
+        manager_email="cto@googleguard.de",
     )
     assert ticket.candidate_name == "Lukas Weber"
 
     # 4. ProvisioningPlan
     plan = ProvisioningPlan(
-        user_email="lukas.weber@buenacloud.de",
+        user_email="lukas.weber@googleguard.de",
         target_ou="/Engineering",
-        assigned_groups=["devops-team@buenacloud.de", "all-staff@buenacloud.de"],
+        assigned_groups=["devops-team@googleguard.de", "all-staff@googleguard.de"],
         smime_required=True,
     )
     assert plan.target_ou == "/Engineering"

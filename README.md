@@ -1,4 +1,4 @@
-# BuenaGuard AI: Google Workspace Security, GDPR/DSGVO DLP & Onboarding Copilot
+# GoogleGuard AI: Google Workspace Security, GDPR/DSGVO DLP & Onboarding Copilot
 
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%20%7C%203.14-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com)
@@ -8,9 +8,9 @@
 [![GDPR Compliant](https://img.shields.io/badge/GDPR%2FDSGVO-Zero%20Raw%20PII-green.svg)](https://gdpr-info.eu/)
 [![Tests Passing](https://img.shields.io/badge/tests-76%20passed-brightgreen.svg)](file:///D:/buenaai/tests)
 
-**BuenaGuard AI** is an enterprise-grade Google Workspace security automation platform and copilot engineered for **BuenaCloud GmbH** (DACH Google Cloud & Workspace Premier Partner). It combines local regex-based privacy filtering, **Google AI Studio Gemini 3.8 Flash** structured reasoning, and Google Drive & Sheets APIs into a zero-trust compliance engine.
+**GoogleGuard AI** is an enterprise-grade Google Workspace security automation platform and copilot engineered for **GoogleGuard Enterprise GmbH** (DACH Google Cloud & Workspace Premier Partner). It combines local regex-based privacy filtering, **Google AI Studio Gemini 3.8 Flash** structured reasoning, and Google Drive & Sheets APIs into a zero-trust compliance engine.
 
-Designed under a **Zero-Billing Hybrid Strategy**, BuenaGuard AI operates seamlessly in two modes:
+Designed under a **Zero-Billing Hybrid Strategy**, GoogleGuard AI operates seamlessly in two modes:
 1. **LIVE Mode:** Interacts directly with Google AI Studio and real Google Drive folders / Google Sheets using read-only OAuth 2.0 scopes.
 2. **MOCK Mode:** Operates 100% offline with zero cloud billing dependencies, using synthetic German enterprise fixtures matching Google Workspace Admin SDK schemas.
 
@@ -40,7 +40,7 @@ Designed under a **Zero-Billing Hybrid Strategy**, BuenaGuard AI operates seamle
 
 ```
                           ┌─────────────────────────────────────┐
-                          │         BuenaGuard AI Core          │
+                          │         GoogleGuard AI Core          │
                           └──────────────────┬──────────────────┘
                                              │
                ┌─────────────────────────────┼─────────────────────────────┐
@@ -210,8 +210,8 @@ D:/buenaai/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/azizwhibi/buenaguard-ai.git
-cd buenaguard-ai
+git clone https://github.com/azizwhibi/googleguard-ai.git
+cd googleguard-ai
 ```
 
 ### 2. Set Up Virtual Environment & Dependencies
@@ -304,7 +304,7 @@ Open your browser to:
 ---
 
 ### 2. Custom Google Workspace MCP Server
-BuenaGuard AI provides a standalone Model Context Protocol server communicating over stdio.
+GoogleGuard AI provides a standalone Model Context Protocol server communicating over stdio.
 
 #### Run Directly:
 ```powershell
@@ -316,7 +316,7 @@ Add to your MCP configuration file (e.g. `.agents/mcp_config.json`):
 ```json
 {
   "mcpServers": {
-    "buenaguard-workspace": {
+    "googleguard-workspace": {
       "command": "python",
       "args": ["-m", "src.mcp_server.workspace_mcp"],
       "env": {
@@ -378,12 +378,12 @@ Contains 6 candidate profiles (CFO, Payroll Specialist, Cloud Architect, Backend
 
 ## Containerization & Google Cloud Run Deployment
 
-BuenaGuard AI is packaged for cloud-native zero-downtime deployment:
+GoogleGuard AI is packaged for cloud-native zero-downtime deployment:
 
 ### Docker Container Build
 ```bash
-docker build -t buenaguard-ai:latest .
-docker run -p 8080:8080 --env-file .env buenaguard-ai:latest
+docker build -t googleguard-ai:latest .
+docker run -p 8080:8080 --env-file .env googleguard-ai:latest
 ```
 - **Security:** Runs as non-root user (`USER nonroot`).
 - **Secret Protection:** `.dockerignore` excludes `token.json`, `credentials.json`, `geminiapikey.txt`, `.env`, and `audit_logs.db`.
@@ -410,4 +410,4 @@ gcloud run services replace cloudrun.yaml --region europe-west3
 
 ## License & Compliance Notice
 
-Developed for **BuenaCloud GmbH**. Built in accordance with European General Data Protection Regulation (**GDPR / DSGVO Art. 6, 9, 32**) and Google Workspace API Services User Data Policy.
+Developed for **GoogleGuard Enterprise GmbH**. Built in accordance with European General Data Protection Regulation (**GDPR / DSGVO Art. 6, 9, 32**) and Google Workspace API Services User Data Policy.

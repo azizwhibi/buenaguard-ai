@@ -1,8 +1,8 @@
 STATEMENT OF WORK & INDEPENDENT CONTRACTOR AGREEMENT
 
-Client: BuenaCloud Client Enterprise (Germany)
+Client: GoogleGuard Client Enterprise (Germany)
 Contractor: Carlos Mendez (Cybersecurity Consultant)
-Email: c.mendez@buenacloud.de
+Email: c.mendez@googleguard.de
 Tax Registration: ES-Y88123456K
 
 1. Scope of Engagement

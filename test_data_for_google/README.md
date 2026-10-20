@@ -1,6 +1,6 @@
-# BuenaGuard AI: Live Demonstration & Testing Dataset
+# GoogleGuard AI: Live Demonstration & Testing Dataset
 
-This directory contains realistic enterprise testing data designed specifically to demonstrate **BuenaGuard AI's** core capabilities in live Google Workspace environments:
+This directory contains realistic enterprise testing data designed specifically to demonstrate **GoogleGuard AI's** core capabilities in live Google Workspace environments:
 
 1. **Google Sheets HR Onboarding Copilot** (Least-privilege OU assignment, S/MIME encryption, 2SV enforcement)
 2. **Google Drive GDPR / DSGVO DLP Scanner** (German IBANs, Steuer-ID, passports, salaries, SEPA transfers)
@@ -16,12 +16,12 @@ Open your `Sheet 1` in Google Sheets and paste these rows:
 
 ```text
 fullName	email	department	jobTitle	manager	location
-Hannah Weber	hannah.weber@buenacloud.de	Finance	Chief Financial Officer (CFO)	Cezary Augustynowicz	Munich Germany
-Maximilian Bauer	m.bauer@buenacloud.de	Finance	Senior Payroll & Tax Specialist	Hannah Weber	Frankfurt Germany
-Lukas Schmidt	l.schmidt@buenacloud.de	Engineering	Lead Cloud Infrastructure Architect	CTO	Berlin Germany
-Sophie Becker	s.becker@buenacloud.de	Engineering	Senior Backend Engineer	Lukas Schmidt	Hamburg Germany
-Carlos Mendez	c.mendez@buenacloud.de	Contractors	External Penetration Tester	Lukas Schmidt	Madrid Spain
-Elena Rostova	e.rostova@buenacloud.de	Legal	Corporate Compliance & Data Privacy Officer	Hannah Weber	Munich Germany
+Hannah Weber	hannah.weber@googleguard.de	Finance	Chief Financial Officer (CFO)	Cezary Augustynowicz	Munich Germany
+Maximilian Bauer	m.bauer@googleguard.de	Finance	Senior Payroll & Tax Specialist	Hannah Weber	Frankfurt Germany
+Lukas Schmidt	l.schmidt@googleguard.de	Engineering	Lead Cloud Infrastructure Architect	CTO	Berlin Germany
+Sophie Becker	s.becker@googleguard.de	Engineering	Senior Backend Engineer	Lukas Schmidt	Hamburg Germany
+Carlos Mendez	c.mendez@googleguard.de	Contractors	External Penetration Tester	Lukas Schmidt	Madrid Spain
+Elena Rostova	e.rostova@googleguard.de	Legal	Corporate Compliance & Data Privacy Officer	Hannah Weber	Munich Germany
 ```
 
 ### Option B: Import CSV File
@@ -37,7 +37,7 @@ Directory: [`test_data_for_google/drive_dlp_files/`](file:///D:/buenaai/test_dat
 
 Simply drag-and-drop any of these files into your [Google Drive](https://drive.google.com):
 
-| File Name | Test Scenario | Expected BuenaGuard AI Classification |
+| File Name | Test Scenario | Expected GoogleGuard AI Classification |
 | :--- | :--- | :--- |
 | `01_CRITICAL_Executive_Payroll_Q4_2026.csv` | Executive salaries, German IBANs, Steuer-IDs | 🔴 **CRITICAL / HIGH RISK** (Art. 6 & 32 DSGVO, PII Redaction) |
 | `02_HIGH_Arbeitsvertrag_Senior_Ingenieur.txt` | German employment contract with passport & bank details | 🔴 **HIGH RISK** (Mandatory redaction, move to restricted OU) |

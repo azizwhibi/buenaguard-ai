@@ -44,12 +44,12 @@ def test_pii_prefilter_passport_detection():
 def test_pii_prefilter_email_detection():
     """Verify email address tokenization."""
     filter = PIIPreFilter()
-    sample_text = "Kontaktieren Sie uns unter security-lead@buenacloud.de für Audit-Berichte."
+    sample_text = "Kontaktieren Sie uns unter security-lead@googleguard.de für Audit-Berichte."
     result = filter.sanitize(sample_text)
     
     assert result.has_pii is True
     assert "EMAIL" in result.detected_types
-    assert "security-lead@buenacloud.de" not in result.sanitized_text
+    assert "security-lead@googleguard.de" not in result.sanitized_text
     assert "[REDACTED_EMAIL_1]" in result.sanitized_text
 
 def test_pii_prefilter_salary_detection():
@@ -78,7 +78,7 @@ def test_pii_prefilter_all_in_one_and_reversibility():
     """Verify multi-PII document redaction and secure in-memory reversal."""
     filter = PIIPreFilter()
     sample_text = (
-        "Mitarbeiter: max.mustermann@buenacloud.de, Pass: C02Y88A12, "
+        "Mitarbeiter: max.mustermann@googleguard.de, Pass: C02Y88A12, "
         "Steuer-ID: 98765432109, IBAN: DE44500105175555555555, Gehalt: 95.000 €."
     )
     result = filter.sanitize(sample_text)
@@ -86,7 +86,7 @@ def test_pii_prefilter_all_in_one_and_reversibility():
     assert result.has_pii is True
     assert set(result.detected_types) == {"EMAIL", "PASSPORT", "STEUER_ID", "IBAN", "SALARY"}
     # Verify no raw PII in sanitized text
-    for pii in ["max.mustermann@buenacloud.de", "C02Y88A12", "98765432109", "DE44500105175555555555", "95.000 €"]:
+    for pii in ["max.mustermann@googleguard.de", "C02Y88A12", "98765432109", "DE44500105175555555555", "95.000 €"]:
         assert pii not in result.sanitized_text
         
     # Verify reconstruction/detokenization works with token map

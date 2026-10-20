@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "buenaguard-workspace": {
+    "googleguard-workspace": {
       "command": "python",
       "args": [
         "src/mcp_server/workspace_mcp.py"
@@ -12,9 +12,9 @@
     }
   },
   "permissions": [
-    "mcp(buenaguard-workspace/check_domain_dlp_status)",
-    "mcp(buenaguard-workspace/list_workspace_ous)",
-    "mcp(buenaguard-workspace/scan_drive_file_dlp)",
-    "mcp(buenaguard-workspace/simulate_user_onboarding)"
+    "mcp(googleguard-workspace/check_domain_dlp_status)",
+    "mcp(googleguard-workspace/list_workspace_ous)",
+    "mcp(googleguard-workspace/scan_drive_file_dlp)",
+    "mcp(googleguard-workspace/simulate_user_onboarding)"
   ]
 }

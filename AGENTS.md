@@ -1,7 +1,7 @@
-# BuenaGuard AI: Engineering Governance & Agent Rules (AGENTS.md)
+# GoogleGuard AI: Engineering Governance & Agent Rules (AGENTS.md)
 
-**Project:** BuenaGuard AI (Google Workspace Security, DLP & Onboarding Copilot)  
-**Target Organization:** BuenaCloud GmbH  
+**Project:** GoogleGuard AI (Google Workspace Security, DLP & Onboarding Copilot)  
+**Target Organization:** GoogleGuard Enterprise GmbH  
 **Primary Architect:** Antigravity AI Engineering Assistant  
 **Installed Skill Packs & MCPs:** `addyosmani/agent-skills`, `DietrichGebert/ponytail`, `Graphify MCP`  
 **Reference Documents:** [`plan.md`](file:///D:/buenaai/plan.md), [`SPEC.md`](file:///D:/buenaai/SPEC.md), [`TODO.md`](file:///D:/buenaai/TODO.md)  

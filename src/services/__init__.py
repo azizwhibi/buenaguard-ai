@@ -1,4 +1,4 @@
-"""Domain services for BuenaGuard AI."""
+"""Domain services for GoogleGuard AI."""
 from src.services.pii_prefilter import PIIPreFilter, RedactionResult
 from src.services.dlp_scanner import DLPScannerService
 from src.services.security_posture import SecurityPostureService

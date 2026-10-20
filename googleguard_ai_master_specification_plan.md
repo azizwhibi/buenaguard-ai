@@ -1,19 +1,19 @@
-# BuenaGuard AI: Master System Specification & Execution Plan
+# GoogleGuard AI: Master System Specification & Execution Plan
 
-**Project Title:** BuenaGuard AI — Automated Google Workspace DLP, S/MIME & Onboarding Copilot  
-**Target Audience:** BuenaCloud GmbH Technical Leadership (Cezary Augustynowicz & CTO)  
-**Primary Objective:** Demonstrate mastery of **Google Antigravity** (Addy Osmani `agent-skills`, Subagents, Custom MCPs, Artifact Review) applied directly to BuenaCloud’s core business (**Google Workspace Enterprise Security, GDPR/DSGVO Compliance, and Gemini AI Automation**).  
+**Project Title:** GoogleGuard AI — Automated Google Workspace DLP, S/MIME & Onboarding Copilot  
+**Target Audience:** GoogleGuard Enterprise GmbH Technical Leadership (Cezary Augustynowicz & CTO)  
+**Primary Objective:** Demonstrate mastery of **Google Antigravity** (Addy Osmani `agent-skills`, Subagents, Custom MCPs, Artifact Review) applied directly to GoogleGuard Enterprise’s core business (**Google Workspace Enterprise Security, GDPR/DSGVO Compliance, and Gemini AI Automation**).  
 **Cost / Billing Profile:** 100% Free Tier / No Cloud Billing Card Required (Hybrid Live OAuth2 + Enterprise Mock Adapter Architecture).
 
 ---
 
-## 1. Executive Summary & Business Value for BuenaCloud
+## 1. Executive Summary & Business Value for GoogleGuard Enterprise
 
-BuenaCloud GmbH specializes in migrating businesses to Google Workspace, securing tenants (DLP, S/MIME, Context-Aware Access), and integrating Google AI. 
+GoogleGuard Enterprise GmbH specializes in migrating businesses to Google Workspace, securing tenants (DLP, S/MIME, Context-Aware Access), and integrating Google AI. 
 
-**BuenaGuard AI** solves two recurring pain points for BuenaCloud’s German and EU enterprise clients:
-1. **Shadow Data & GDPR/DSGVO Compliance:** Employees store unencrypted PII (IBANs, tax IDs, contracts) in Google Drive and send sensitive emails without S/MIME encryption. BuenaGuard scans Drive files and email routing rules, using **Gemini 2.5 Flash** to classify sensitive PII and flag compliance violations.
-2. **Zero-Trust Onboarding Bottlenecks:** Provisioning new hires manually in Google Workspace Admin Console leads to over-privileged accounts. BuenaGuard reads incoming HR onboarding rows from **Google Sheets**, uses Gemini to map the employee to the strictest least-privilege **Organizational Unit (OU)** and **Google Groups**, provisions the account via the **Workspace Admin SDK Adapter**, and generates a tailored Welcome Onboarding Document in **Google Drive**.
+**GoogleGuard AI** solves two recurring pain points for GoogleGuard Enterprise’s German and EU enterprise clients:
+1. **Shadow Data & GDPR/DSGVO Compliance:** Employees store unencrypted PII (IBANs, tax IDs, contracts) in Google Drive and send sensitive emails without S/MIME encryption. GoogleGuard scans Drive files and email routing rules, using **Gemini 2.5 Flash** to classify sensitive PII and flag compliance violations.
+2. **Zero-Trust Onboarding Bottlenecks:** Provisioning new hires manually in Google Workspace Admin Console leads to over-privileged accounts. GoogleGuard reads incoming HR onboarding rows from **Google Sheets**, uses Gemini to map the employee to the strictest least-privilege **Organizational Unit (OU)** and **Google Groups**, provisions the account via the **Workspace Admin SDK Adapter**, and generates a tailored Welcome Onboarding Document in **Google Drive**.
 
 ---
 
@@ -29,7 +29,7 @@ To build and test this system with zero cloud billing dependencies while maintai
                   |                                   |
                   v                                   v
 +-----------------------------------------------------------------------+
-|                     BuenaGuard Core Domain Engine                     |
+|                     GoogleGuard Core Domain Engine                     |
 |  - DLP & PII Scanner Service       - Smart Onboarding Orchestrator    |
 |  - S/MIME & OU Compliance Engine   - GDPR PII Redaction Middleware    |
 +--------+-------------------------+---------------------------+--------+
@@ -75,7 +75,7 @@ To build and test this system with zero cloud billing dependencies while maintai
 ### Feature 3: Gemini Zero-Trust Onboarding Copilot (`src/services/onboarding_copilot.py`)
 * **Input:** Reads pending rows from a live **Google Sheet** (or `fixtures/onboarding_requests.json`) with columns: `Full Name`, `Email`, `Department`, `Job Title`, `Manager`, `Location`.
 * **Processing:**
-  1. Uses **Gemini 2.5 Flash** with Structured Outputs to analyze the `Job Title` and `Department` against BuenaCloud’s Organizational Unit tree (`fixtures/mock_org_units.json`).
+  1. Uses **Gemini 2.5 Flash** with Structured Outputs to analyze the `Job Title` and `Department` against GoogleGuard Enterprise’s Organizational Unit tree (`fixtures/mock_org_units.json`).
   2. Recommends the exact least-privilege `orgUnitPath` (e.g., `/Engineering/Backend`), required Google Groups (`dev-team@`, `gcp-viewers@`), and whether S/MIME is mandatory.
   3. Calls `WorkspaceAdminPort.provision_user()` to write the new user record into the state store and generates a personalized Onboarding Security Checklist in Google Drive.
 
@@ -90,7 +90,7 @@ To build and test this system with zero cloud billing dependencies while maintai
 ## 4. Target Repository Structure
 
 ```text
-buenaguard-ai/
+googleguard-ai/
 ├── .agents/
 │   └── mcp_config.json              # Workspace-scoped MCP configuration for Antigravity
 ├── agents/
@@ -153,7 +153,7 @@ To prove to the CTO that you use Antigravity at an advanced architectural level,
 ### Step 2: Invoke Direct Namespaced Skills (Bypassing Legacy `.toml` Issue)
 Inside your Antigravity session, invoke the skills explicitly and screenshot the output:
 1. `/agent-skills:spec-driven-development`
-   * *Prompt:* "Read `plan.md` and `AGENTS.md`. Generate a formal technical specification in `SPEC.md` defining the Pydantic schemas, port interfaces, and Gemini system prompts for BuenaGuard AI."
+   * *Prompt:* "Read `plan.md` and `AGENTS.md`. Generate a formal technical specification in `SPEC.md` defining the Pydantic schemas, port interfaces, and Gemini system prompts for GoogleGuard AI."
 2. `/agent-skills:planning-and-task-breakdown`
    * *Prompt:* "Break `SPEC.md` down into atomic, testable implementation tasks ordered by dependency."
 3. `/agent-skills:test-driven-development`
@@ -176,7 +176,7 @@ Create `.agents/mcp_config.json` in your repository:
 ```json
 {
   "mcpServers": {
-    "buenaguard-workspace": {
+    "googleguard-workspace": {
       "command": "python",
       "args": ["src/mcp_server/workspace_mcp.py"],
       "env": {
@@ -190,15 +190,15 @@ Create `.agents/mcp_config.json` in your repository:
   },
   "permissions": {
     "allow": [
-      "mcp(buenaguard-workspace/get_tenant_compliance_summary)",
-      "mcp(buenaguard-workspace/scan_drive_file_dlp)",
-      "mcp(buenaguard-workspace/simulate_user_onboarding)",
+      "mcp(googleguard-workspace/get_tenant_compliance_summary)",
+      "mcp(googleguard-workspace/scan_drive_file_dlp)",
+      "mcp(googleguard-workspace/simulate_user_onboarding)",
       "mcp(sqlite-audit/read_query)"
     ]
   }
 }
 ```
-* Open the `/mcp` overlay inside Antigravity, take a screenshot showing `buenaguard-workspace` connected, and run a prompt that calls `get_tenant_compliance_summary` live.
+* Open the `/mcp` overlay inside Antigravity, take a screenshot showing `googleguard-workspace` connected, and run a prompt that calls `get_tenant_compliance_summary` live.
 
 ### Step 5: Human-in-the-Loop Artifact Review (`Ctrl+R`)
 * When Antigravity proposes multi-file changes, press **`Ctrl+R`** to open the **Artifact Review** diff view.
@@ -212,7 +212,7 @@ Create `.agents/mcp_config.json` in your repository:
 ```json
 [
   {
-    "name": "BuenaCloud Client Corp",
+    "name": "GoogleGuard Client Corp",
     "orgUnitPath": "/",
     "description": "Root Organization Unit"
   },
@@ -277,20 +277,20 @@ Create `.agents/mcp_config.json` in your repository:
 Your slide deck and live demonstration should follow this 15-minute story arc:
 
 1. **Slide 1 — From Interview 1 to Today:**
-   * Acknowledge Cezary’s question from the first interview. State clearly: *"You asked about Google AI and Google Workspace, and mentioned building something with Antigravity. I built **BuenaGuard AI**—an enterprise Workspace DLP & Onboarding Copilot—using Antigravity’s full orchestration stack."*
-2. **Slide 2 — Understanding BuenaCloud’s Domain:**
+   * Acknowledge Cezary’s question from the first interview. State clearly: *"You asked about Google AI and Google Workspace, and mentioned building something with Antigravity. I built **GoogleGuard AI**—an enterprise Workspace DLP & Onboarding Copilot—using Antigravity’s full orchestration stack."*
+2. **Slide 2 — Understanding GoogleGuard Enterprise’s Domain:**
    * Briefly explain Google Workspace Enterprise security pillars: **Organizational Units (OUs), S/MIME email encryption, Data Loss Prevention (DLP), Context-Aware Access, and GDPR/DSGVO data residency**.
-3. **Slide 3 — BuenaGuard AI Architecture (Hexagonal + Zero-Cost Dev Mode):**
+3. **Slide 3 — GoogleGuard AI Architecture (Hexagonal + Zero-Cost Dev Mode):**
    * Show the architecture diagram from Section 2. Explain how you combined live Google Drive/Sheets OAuth2 and Gemini 2.5 Flash with contract-tested Mock Adapters for Enterprise Admin SDK APIs.
 4. **Slide 4 — Antigravity Governance (`AGENTS.md` + Addy Osmani `agent-skills`):**
    * Show screenshots of `AGENTS.md` and your direct invocations of `/agent-skills:spec-driven-development` and `/agent-skills:test-driven-development` (noting how you bypassed the `agy 1.1.x` legacy `.toml` command limitation).
 5. **Slide 5 — Subagent Orchestration & Security Auditing:**
    * Show how you ran parallel subagents for fixtures, API routes, and Dockerization, and used the `security-auditor` persona to verify zero PII leakage in logs. Include your `Ctrl+R` Artifact Review screenshot.
 6. **Slide 6 — Custom Google Workspace MCP Server:**
-   * Show `.agents/mcp_config.json` with granular `mcp(server/tool)` allowlists and explain how your custom Python MCP server lets any BuenaCloud engineer inspect tenant compliance directly from Antigravity.
+   * Show `.agents/mcp_config.json` with granular `mcp(server/tool)` allowlists and explain how your custom Python MCP server lets any GoogleGuard Enterprise engineer inspect tenant compliance directly from Antigravity.
 7. **Slide 7 — Live Demo (3 Minutes):**
    * **Part A (Web UI / FastAPI):** Trigger a DLP scan on a sample contract containing a German IBAN and show Gemini flagging the GDPR violation and public sharing risk.
    * **Part B (Smart Onboarding):** Trigger an onboarding analysis for a new "Senior Payroll Specialist" and show Gemini assigning `/Executive_Finance` with mandatory S/MIME.
-   * **Part C (Antigravity CLI MCP):** Run a prompt inside Antigravity calling your custom `buenaguard-workspace` MCP server live.
-8. **Slide 8 — How This Accelerates BuenaCloud Engineering:**
-   * Propose how BuenaCloud can standardize reusable `SKILL.md` playbooks and internal Workspace MCP servers to cut client migration, scripting, and compliance auditing time by 40–60%.
+   * **Part C (Antigravity CLI MCP):** Run a prompt inside Antigravity calling your custom `googleguard-workspace` MCP server live.
+8. **Slide 8 — How This Accelerates GoogleGuard Enterprise Engineering:**
+   * Propose how GoogleGuard Enterprise can standardize reusable `SKILL.md` playbooks and internal Workspace MCP servers to cut client migration, scripting, and compliance auditing time by 40–60%.

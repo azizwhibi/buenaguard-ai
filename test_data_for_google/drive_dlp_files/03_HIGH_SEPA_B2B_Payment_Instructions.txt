@@ -1,6 +1,6 @@
 CONFIDENTIAL // SEPA WIRE TRANSFER DISBURSEMENT BATCH #2026-11A
 
-From: BuenaCloud Client Enterprise Treasury <treasury@buenacloud.de>
+From: GoogleGuard Client Enterprise Treasury <treasury@googleguard.de>
 To: Global Operations Banking Unit
 Date: 02.11.2026
 Security Classification: INTERNAL STRICT / FINANCIAL PII

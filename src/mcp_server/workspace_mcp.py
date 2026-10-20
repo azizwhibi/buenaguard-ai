@@ -25,7 +25,7 @@ from src.services.onboarding_copilot import OnboardingCopilotService
 from src.models.schemas import OnboardingRequest
 
 # Initialize MCP server
-mcp = FastMCP("buenaguard-workspace")
+mcp = FastMCP("googleguard-workspace")
 
 # Wire Hexagonal ports and core domain services via factory
 admin_adapter = get_admin_adapter()

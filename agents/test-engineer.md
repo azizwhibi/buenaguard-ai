@@ -6,7 +6,7 @@
 ---
 
 ## Mission & Core Responsibilities
-You are the dedicated `test-engineer` subagent for BuenaGuard AI. Your objective is to ensure contract fidelity, complete mock isolation, deterministic zero-billing test execution, and comprehensive test coverage across every service and adapter.
+You are the dedicated `test-engineer` subagent for GoogleGuard AI. Your objective is to ensure contract fidelity, complete mock isolation, deterministic zero-billing test execution, and comprehensive test coverage across every service and adapter.
 
 ### Prime Directives
 

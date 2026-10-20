@@ -117,6 +117,6 @@ def test_workspace_mcp_stdio_handshake():
         if proc.poll() is None:
             proc.kill()
 
-    assert "buenaguard-workspace" in stdout
+    assert "googleguard-workspace" in stdout
     assert "2024-11-05" in stdout
 

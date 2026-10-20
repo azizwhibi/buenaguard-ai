@@ -24,8 +24,8 @@ from src.services.security_posture import SecurityPostureService
 from src.services.onboarding_copilot import OnboardingCopilotService
 
 app = FastAPI(
-    title="BuenaGuard AI",
-    description="Google Workspace Security, DLP & Onboarding Copilot for BuenaCloud GmbH",
+    title="GoogleGuard AI",
+    description="Google Workspace Security, DLP & Onboarding Copilot for GoogleGuard Enterprise GmbH",
     version="1.0.0",
 )
 
@@ -75,7 +75,7 @@ def health_check() -> Dict[str, Any]:
     return {
         "status": "ok",
         "mode": settings.WORKSPACE_MODE,
-        "app": "BuenaGuard AI",
+        "app": "GoogleGuard AI",
         "version": "1.0.0",
     }
 

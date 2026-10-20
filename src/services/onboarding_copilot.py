@@ -89,7 +89,7 @@ class OnboardingCopilotService:
             else "- [ ] **S/MIME Encryption:** Optional for your role."
         )
 
-        return f"""# Welcome to BuenaCloud Client Corp, {full_name}!
+        return f"""# Welcome to GoogleGuard Client Corp, {full_name}!
 
 ## Corporate Account Provisioning Details
 - **Email:** {user.primaryEmail}

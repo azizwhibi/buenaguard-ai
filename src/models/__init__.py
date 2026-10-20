@@ -1,4 +1,4 @@
-"""BuenaGuard AI Domain Schemas and Value Objects."""
+"""GoogleGuard AI Domain Schemas and Value Objects."""
 from src.models.schemas import (
     RiskLevel,
     DLPRiskLevel,

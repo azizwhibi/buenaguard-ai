@@ -1,14 +1,14 @@
-# BuenaGuard AI: Executive Presentation Notes & Talking Points
+# GoogleGuard AI: Executive Presentation Notes & Talking Points
 
-**Prepared for:** Cezary Augustynowicz (CTO, BuenaCloud GmbH)  
+**Prepared for:** Cezary Augustynowicz (CTO, GoogleGuard Enterprise GmbH)  
 **Presenter:** AI Engineering Candidate  
-**Topic:** BuenaGuard AI Architecture, Antigravity Agentic Governance & Enterprise Impact  
+**Topic:** GoogleGuard AI Architecture, Antigravity Agentic Governance & Enterprise Impact  
 
 ---
 
 ## 1. High-Level Pitch (The "30-Second Hook")
 
-> "BuenaGuard AI is a production-grade, zero-billing copilot designed specifically for BuenaCloud's Google Workspace Enterprise practice. It combines Google AI Studio Gemini 2.5 Flash, strict Hexagonal port/adapter decoupling, and an Antigravity MCP server to automate GDPR data loss prevention, tenant security posture auditing, and zero-trust HR onboarding. Developed with rigorous Test-Driven Development and governed by Addy Osmani's agent skills, it achieves 91.12% test coverage and eliminates 40–60% of manual administration overhead."
+> "GoogleGuard AI is a production-grade, zero-billing copilot designed specifically for GoogleGuard Enterprise's Google Workspace Enterprise practice. It combines Google AI Studio Gemini 2.5 Flash, strict Hexagonal port/adapter decoupling, and an Antigravity MCP server to automate GDPR data loss prevention, tenant security posture auditing, and zero-trust HR onboarding. Developed with rigorous Test-Driven Development and governed by Addy Osmani's agent skills, it achieves 91.12% test coverage and eliminates 40–60% of manual administration overhead."
 
 ---
 
@@ -46,12 +46,12 @@
 
 ---
 
-## 3. Commercial & Operational ROI for BuenaCloud
+## 3. Commercial & Operational ROI for GoogleGuard Enterprise
 
 1. **Client Tenant Onboarding Time:**
    - **Before:** 4–6 hours per client to inspect OU trees, verify 2SV enforcement, configure S/MIME keys, and create security checklists.
-   - **With BuenaGuard AI:** Reduced to **under 15 minutes** via automated tenant posture calculation and zero-trust role mapping.
+   - **With GoogleGuard AI:** Reduced to **under 15 minutes** via automated tenant posture calculation and zero-trust role mapping.
 2. **GDPR DLP Compliance Audits:**
    - Instant discovery of public Google Drive links containing financial and personal data without waiting for enterprise DLP batch indexing.
 3. **Zero Developer Billing Overhead:**
-   - New BuenaCloud engineers can clone the repository, run `pytest`, and build features offline without requesting Google Cloud service account keys or incurring Gemini API charges.
+   - New GoogleGuard Enterprise engineers can clone the repository, run `pytest`, and build features offline without requesting Google Cloud service account keys or incurring Gemini API charges.
