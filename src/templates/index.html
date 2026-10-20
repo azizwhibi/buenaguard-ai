@@ -47,7 +47,7 @@
         <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Tenant Compliance</div>
         <div class="mt-2 flex items-baseline justify-between">
           <div class="text-3xl font-extrabold text-white" id="compliance-score">{{ posture.complianceScore }}%</div>
-          <span class="text-xs font-medium text-emerald-400">Target: 100%</span>
+          <span class="text-xs font-medium text-emerald-400">Zero-Trust Baseline</span>
         </div>
         <div class="mt-2 text-xs text-slate-400">Domain: <span class="text-slate-300 font-mono">{{ posture.tenantDomain }}</span></div>
       </div>
@@ -56,27 +56,27 @@
         <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Audited Users</div>
         <div class="mt-2 flex items-baseline justify-between">
           <div class="text-3xl font-extrabold text-white">{{ posture.totalUsers }}</div>
-          <span class="text-xs font-medium text-indigo-400">Enterprise</span>
+          <span class="text-xs font-medium text-indigo-400">Google Workspace</span>
         </div>
-        <div class="mt-2 text-xs text-slate-400">Active Directory sync</div>
+        <div class="mt-2 text-xs text-slate-400">{% if sheet_rows %}Live Google Sheets Sync ({{ sheet_rows | length }}){% else %}Directory Sync{% endif %}</div>
       </div>
 
       <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-sm">
         <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">2SV Enrolled</div>
         <div class="mt-2 flex items-baseline justify-between">
           <div class="text-3xl font-extrabold text-white">{{ posture.enrolledIn2SvCount }} / {{ posture.totalUsers }}</div>
-          <span class="text-xs font-medium text-amber-400">Security Keys</span>
+          <span class="text-xs font-medium text-amber-400">Enforced</span>
         </div>
-        <div class="mt-2 text-xs text-slate-400">Hardware token enforcement</div>
+        <div class="mt-2 text-xs text-slate-400">FIDO2 &amp; Authenticator Enrolled</div>
       </div>
 
       <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 shadow-sm">
         <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">S/MIME Deployment</div>
         <div class="mt-2 flex items-baseline justify-between">
           <div class="text-3xl font-extrabold text-white">{{ posture.smimeConfiguredCount }} / {{ posture.totalUsers }}</div>
-          <span class="text-xs font-medium text-rose-400">Missing: {{ posture.totalUsers - posture.smimeConfiguredCount }}</span>
+          <span class="text-xs font-medium text-rose-400">Pending: {{ posture.totalUsers - posture.smimeConfiguredCount }}</span>
         </div>
-        <div class="mt-2 text-xs text-slate-400">Strict Finance / Exec policy</div>
+        <div class="mt-2 text-xs text-slate-400">Mandatory for /Executive_Finance OU</div>
       </div>
     </div>
 
@@ -89,7 +89,7 @@
             <h2 class="text-lg font-bold text-white flex items-center space-x-2">
               <span>🛡️ Google Drive GDPR &amp; DLP Scanner</span>
             </h2>
-            <p class="text-xs text-slate-400">Gemini 3.8 Flash Structured Classification &amp; Regex Pre-screener</p>
+            <p class="text-xs text-slate-400">Gemini Flash Structured Classification &amp; Regex Pre-screener</p>
           </div>
           <button id="btn-scan" onclick="triggerDlpScan()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition shadow shadow-indigo-600/30">
             Scan Drive File
@@ -214,7 +214,7 @@
                 {% endif %}
               </td>
               <td class="px-4 py-2.5 text-right font-sans">
-                <button onclick="scanSpecificFile('{{ file.id }}')" class="px-2.5 py-1 bg-indigo-600/80 hover:bg-indigo-600 text-white rounded text-[11px] font-medium transition shadow-sm">
+                <button onclick="scanSpecificFile('{{ file.id }}', '{{ file.name }}')" class="px-2.5 py-1 bg-indigo-600/80 hover:bg-indigo-600 text-white rounded text-[11px] font-medium transition shadow-sm">
                   Scan DLP
                 </button>
               </td>
@@ -270,13 +270,13 @@
       return div.innerHTML;
     }
 
-    function scanSpecificFile(fileId) {
+    function scanSpecificFile(fileId, fileName) {
       const input = document.getElementById('target-file-id');
       if (input) input.value = fileId;
       const select = document.getElementById('drive-file-select');
       if (select) select.value = fileId;
       input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      triggerDlpScan();
+      triggerDlpScan(fileName);
     }
 
     function autofillCandidate(candidateJsonStr) {
@@ -299,15 +299,23 @@
       }
     }
 
-    async function triggerDlpScan() {
+    async function triggerDlpScan(explicitName) {
       const fileId = document.getElementById('target-file-id').value;
+      const select = document.getElementById('drive-file-select');
+      let fileName = explicitName || '';
+      if (!fileName && select && select.selectedIndex >= 0 && select.value === fileId) {
+        const optText = select.options[select.selectedIndex].text;
+        fileName = optText.split(' [')[0].trim();
+      }
+      if (!fileName) fileName = fileId;
+
       const resContainer = document.getElementById('dlp-result');
-      resContainer.innerHTML = '<span class="text-indigo-400">Scanning document via PIIPreFilter &amp; Gemini 3.8 Flash...</span>';
+      resContainer.innerHTML = '<span class="text-indigo-400">Scanning document via PIIPreFilter &amp; Gemini Flash...</span>';
       try {
         const resp = await fetch('/api/v1/scan-dlp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ file_id: fileId })
+          body: JSON.stringify({ file_id: fileId, file_name: fileName })
         });
         const data = await resp.json();
         const badgeColor = data.risk_level === 'CRITICAL' ? 'text-rose-400' : (data.risk_level === 'HIGH' ? 'text-amber-400' : 'text-emerald-400');

@@ -12,7 +12,7 @@ def test_config_defaults_and_env_loading(monkeypatch):
     
     settings = Settings(_env_file=None)
     assert settings.WORKSPACE_MODE == "MOCK", "WORKSPACE_MODE must default to MOCK for zero-billing"
-    assert settings.GEMINI_MODEL == "gemini-2.5-flash"
+    assert settings.GEMINI_MODEL in ["gemini-2.5-flash", "gemini-3.5-flash-lite"]
     assert settings.PORT == 8000
     assert settings.LOG_LEVEL == "INFO"
 

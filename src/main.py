@@ -83,7 +83,9 @@ def health_check() -> Dict[str, Any]:
 @app.get("/api/v1/posture", response_model=SecurityPostureReport)
 def get_security_posture() -> SecurityPostureReport:
     """Return tenant security compliance score, audited users, and flagged violations."""
-    return posture_service.audit_tenant_posture()
+    sheet_rows = drive_adapter.read_sheet_rows(spreadsheet_id=settings.GOOGLE_ONBOARDING_SPREADSHEET_ID)
+    live_users = posture_service.users_from_candidate_rows(sheet_rows) if sheet_rows else None
+    return posture_service.audit_tenant_posture(users=live_users)
 
 
 @app.post("/api/v1/scan-dlp", response_model=DLPAuditReport)
@@ -139,13 +141,14 @@ def google_auth_status() -> Dict[str, Any]:
 
 @app.get("/", response_class=HTMLResponse)
 def dashboard_view(request: Request):
-    """Serve responsive Tailwind CSS executive dashboard."""
-    posture = posture_service.audit_tenant_posture()
+    """Serve responsive Tailwind CSS executive dashboard with dynamic security posture."""
     if hasattr(drive_adapter, "_ensure_authenticated"):
         drive_adapter._ensure_authenticated()
     is_auth = getattr(drive_adapter, "is_authenticated", False)
     drive_files = drive_adapter.list_drive_files(folder_name=settings.GOOGLE_DRIVE_DLP_FOLDER_NAME)
     sheet_rows = drive_adapter.read_sheet_rows(spreadsheet_id=settings.GOOGLE_ONBOARDING_SPREADSHEET_ID)
+    live_users = posture_service.users_from_candidate_rows(sheet_rows) if sheet_rows else None
+    posture = posture_service.audit_tenant_posture(users=live_users)
     return templates.TemplateResponse(
         request=request,
         name="index.html",

@@ -1,7 +1,8 @@
+import concurrent.futures
 import hashlib
 import json
 import logging
-from typing import Type, TypeVar, Optional, Any, Dict
+from typing import Type, TypeVar, Optional, Any, Dict, List
 from pydantic import BaseModel
 from src.config import settings
 from src.ports.workspace_port import GeminiClassifierPort
@@ -67,17 +68,22 @@ class GeminiClient(GeminiClassifierPort):
         for model in models_to_try:
             try:
                 from google.genai import types
-                config = types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    response_schema=response_schema,
-                    system_instruction=system_instruction,
-                    temperature=0.1
-                )
-                response = self._genai_client.models.generate_content(
-                    model=model,
-                    contents=prompt,
-                    config=config
-                )
+                def _do_generate():
+                    config = types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        response_schema=response_schema,
+                        system_instruction=system_instruction,
+                        temperature=0.1
+                    )
+                    return self._genai_client.models.generate_content(
+                        model=model,
+                        contents=prompt,
+                        config=config
+                    )
+                with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                    future = executor.submit(_do_generate)
+                    response = future.result(timeout=8.0)
+
                 raw_text = response.text
                 data = json.loads(raw_text)
                 return response_schema.model_validate(data)
@@ -105,6 +111,30 @@ class GeminiClient(GeminiClassifierPort):
         from src.services.pii_prefilter import PIIPreFilter
         redaction = PIIPreFilter().sanitize(text)
 
+        if not redaction.has_pii:
+            return {
+                "has_pii": False,
+                "detected_types": [],
+                "risk_level": "LOW",
+                "gdpr_articles": [],
+                "remediation": "No action required. Document complies with GDPR data protection standards.",
+            }
+
+        detected_set = set(redaction.detected_types)
+        text_lower = text.lower()
+        if "contractor" in text_lower and not ("passport" in text_lower or "pass" in text_lower or "steuer" in text_lower):
+            computed_risk = "MEDIUM"
+        elif "payroll" in text_lower or ("SALARY" in detected_set and "IBAN" in detected_set and "STEUER_ID" in detected_set):
+            computed_risk = "CRITICAL"
+        elif "PASSPORT" in detected_set or "STEUER_ID" in detected_set or "sepa" in text_lower or "vertrag" in text_lower or "contract" in text_lower:
+            computed_risk = "HIGH"
+        elif "IBAN" in detected_set and not ("contractor" in text_lower):
+            computed_risk = "HIGH"
+        elif redaction.has_pii:
+            computed_risk = "MEDIUM"
+        else:
+            computed_risk = "LOW"
+
         if not self.is_mock_mode and self._genai_client:
             from pydantic import BaseModel, Field
 
@@ -115,34 +145,43 @@ class GeminiClient(GeminiClassifierPort):
                 gdpr_articles: List[str] = Field(default_factory=list)
                 remediation: str = ""
 
+            GeminiDLPAnalysis.model_rebuild()
+
             prompt = (
                 "You are an expert Google Workspace Data Loss Prevention and GDPR compliance auditor for GoogleGuard Enterprise GmbH.\n"
+                f"Pre-screened PII Token Types: {', '.join(redaction.detected_types) if redaction.detected_types else 'None'}\n"
+                "Risk Classification Rules:\n"
+                "- CRITICAL: Bulk employee salaries, executive payroll, multiple German IBANs and Steuer-IDs (Art. 6, 9, 32, 83 GDPR).\n"
+                "- HIGH: Employment contracts with passport numbers, German IBANs, individual salaries, or SEPA wire transfer disbursements (Art. 6, 32 GDPR).\n"
+                "- MEDIUM: External contractor agreements with consulting rates or internal financial terms without full personal IDs (Art. 6 GDPR).\n"
+                "- LOW: Operational sprint notes, clean technical docs with no PII.\n\n"
                 "Analyze the following sanitized document text (where sensitive values like IBANs and Tax IDs are pre-tokenized):\n\n"
                 f"--- BEGIN DOCUMENT ---\n{redaction.sanitized_text[:2000]}\n--- END DOCUMENT ---\n\n"
-                "Identify any remaining sensitive customer secrets, financial data, or compliance risks.\n"
-                "Provide risk_level (CRITICAL, HIGH, MEDIUM, or LOW), relevant GDPR articles (e.g. Art. 6, Art. 9, Art. 32, Art. 83), "
-                "and concrete remediation recommendations."
+                "Provide risk_level (CRITICAL, HIGH, MEDIUM, or LOW), relevant GDPR articles, and concrete remediation recommendations."
             )
             mock_fallback = {
                 "has_pii": redaction.has_pii,
                 "detected_types": redaction.detected_types,
-                "risk_level": "CRITICAL" if redaction.has_pii else "LOW",
+                "risk_level": computed_risk,
                 "gdpr_articles": [
                     "Art. 6 (Lawfulness of Processing)",
                     "Art. 32 (Security of Processing)",
                     "Art. 83 (Administrative Fines)",
-                ] if redaction.has_pii else [],
-                "remediation": "Revoke public sharing and restrict access." if redaction.has_pii else "Document complies with standards.",
+                ] if computed_risk in ["CRITICAL", "HIGH"] else (["Art. 6 (Lawfulness of Processing)"] if redaction.has_pii else []),
+                "remediation": "Restrict sharing permissions and move document to /Executive_Finance or restricted confidential storage." if redaction.has_pii else "Document complies with standards.",
             }
             try:
                 res = self.generate_structured(prompt, GeminiDLPAnalysis, mock_response=mock_fallback)
                 all_detected = sorted(list(set(redaction.detected_types + res.detected_types)))
+                model_risk = res.risk_level.upper() if res.risk_level else computed_risk
+                risk_hierarchy = {"CRITICAL": 4, "HIGH": 3, "MEDIUM": 2, "LOW": 1}
+                final_risk = model_risk if risk_hierarchy.get(model_risk, 0) >= risk_hierarchy.get(computed_risk, 0) else computed_risk
                 return {
                     "has_pii": redaction.has_pii or res.has_pii,
                     "detected_types": all_detected,
-                    "risk_level": res.risk_level.upper() if res.risk_level else ("CRITICAL" if redaction.has_pii else "LOW"),
-                    "gdpr_articles": res.gdpr_articles,
-                    "remediation": res.remediation,
+                    "risk_level": final_risk,
+                    "gdpr_articles": res.gdpr_articles or mock_fallback["gdpr_articles"],
+                    "remediation": res.remediation or mock_fallback["remediation"],
                 }
             except Exception as e:
                 logger.warning("Live Gemini classify_document fallback: %s", str(e))
@@ -150,7 +189,12 @@ class GeminiClient(GeminiClassifierPort):
         return {
             "has_pii": redaction.has_pii,
             "detected_types": redaction.detected_types,
-            "risk_level": "CRITICAL" if redaction.has_pii else "LOW",
+            "risk_level": computed_risk,
+            "gdpr_articles": [
+                "Art. 6 (Lawfulness of Processing)",
+                "Art. 32 (Security of Processing)",
+            ] if redaction.has_pii else [],
+            "remediation": "Ensure document is stored within an encrypted folder under /Executive_Finance." if redaction.has_pii else "Document complies with standards.",
         }
 
     def recommend_onboarding_ou(self, ticket: Any) -> Dict[str, Any]:

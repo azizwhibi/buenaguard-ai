@@ -88,29 +88,55 @@ def test_dlp_scanner_scan_all_drive_files():
     assert any(r.risk_level in [RiskLevel.CRITICAL, RiskLevel.HIGH] for r in reports)
 
 def test_dlp_scanner_external_share_and_internal_medium_risk():
-    """Verify HIGH risk on EXTERNAL_SHARE and MEDIUM risk on DOMAIN_INTERNAL with PII."""
+    """Verify risk classification based on content sensitivity and sharing permissions."""
     scanner = DLPScannerService()
-    content = "Mitarbeiter Gehalt: 85.000 € und IBAN: DE89370400440532013000"
     
-    # 1. External share with PII -> HIGH
+    # 1. External share with contractor rate -> HIGH
+    contractor_content = "Carlos Mendez, Contractor SOW. Rate: 850 EUR per day. Zero-trust remote access."
     high_rep = scanner.scan_document(
         file_id="doc_ext_01",
-        file_name="external_payroll.txt",
-        content=content,
+        file_name="external_contractor_agreement.txt",
+        content=contractor_content,
         sharing_risk="EXTERNAL_SHARE"
     )
     assert high_rep.risk_level == RiskLevel.HIGH
-    assert "collaborators" in high_rep.recommended_remediation.lower()
+    assert "sharing permissions" in high_rep.recommended_remediation.lower()
     
-    # 2. Domain internal with PII -> MEDIUM
+    # 2. Domain internal with contractor rate only -> MEDIUM
     med_rep = scanner.scan_document(
         file_id="doc_int_01",
-        file_name="internal_payroll.txt",
-        content=content,
+        file_name="04_MEDIUM_External_Contractor_Agreement.txt",
+        content=contractor_content,
         sharing_risk="DOMAIN_INTERNAL"
     )
     assert med_rep.risk_level == RiskLevel.MEDIUM
     assert "encrypted folder" in med_rep.recommended_remediation.lower()
+
+    # 3. Domain internal with executive payroll (Salaries + IBANs + Steuer-IDs) -> CRITICAL
+    payroll_content = (
+        "Mitarbeiter_ID,Vollstaendiger_Name,Steuer_ID,IBAN,Monatsgehalt_EUR\n"
+        "EMP-101,Hannah Weber,11987654321,DE21500500001234567890,16.500 EUR\n"
+    )
+    crit_rep = scanner.scan_document(
+        file_id="doc_crit_01",
+        file_name="01_CRITICAL_Executive_Payroll_Q4_2026.csv",
+        content=payroll_content,
+        sharing_risk="DOMAIN_INTERNAL"
+    )
+    assert crit_rep.risk_level == RiskLevel.CRITICAL
+    assert "quarantine" in crit_rep.recommended_remediation.lower()
+
+    # 4. Domain internal with employment contract (Passport + IBAN + Steuer-ID) -> HIGH
+    contract_content = (
+        "ARBEITSVERTRAG: Lukas Schmidt. Pass: C01X00T4K, IBAN: DE89370400440532013000, Steuer-ID: 41234567890"
+    )
+    contract_rep = scanner.scan_document(
+        file_id="doc_contract_02",
+        file_name="02_HIGH_Arbeitsvertrag_Senior_Ingenieur.txt",
+        content=contract_content,
+        sharing_risk="DOMAIN_INTERNAL"
+    )
+    assert contract_rep.risk_level == RiskLevel.HIGH
 
 def test_dlp_scanner_generic_audit_store_log_event():
     """Verify fallback to log_event when audit store lacks log_dlp_scan."""

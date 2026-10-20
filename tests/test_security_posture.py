@@ -45,3 +45,25 @@ def test_security_posture_empty_or_no_admin_port():
     assert report.totalUsers == 0
     assert len(report.flaggedUsers) == 0
 
+def test_security_posture_from_live_candidate_rows():
+    """Verify security posture auditor dynamically evaluates candidate rows from Google Sheets."""
+    rows = [
+        {"fullName": "Hannah Weber", "email": "hannah.weber@googleguard.de", "department": "Finance", "jobTitle": "Chief Financial Officer (CFO)"},
+        {"fullName": "Lukas Schmidt", "email": "l.schmidt@googleguard.de", "department": "Engineering", "jobTitle": "Lead Architect"},
+        {"fullName": "Carlos Mendez", "email": "c.mendez@googleguard.de", "department": "Contractors", "jobTitle": "External Pentester"},
+    ]
+    users = SecurityPostureService.users_from_candidate_rows(rows)
+    assert len(users) == 3
+    assert users[0].orgUnitPath == "/Executive_Finance"
+    assert users[1].orgUnitPath == "/Engineering"
+    assert users[2].orgUnitPath == "/Contractors"
+
+    service = SecurityPostureService()
+    report = service.audit_tenant_posture(users=users)
+    assert report.tenantDomain == "googleguard.de"
+    assert report.totalUsers == 3
+    flagged = [u["email"] for u in report.flaggedUsers]
+    assert "hannah.weber@googleguard.de" in flagged
+    assert "c.mendez@googleguard.de" in flagged
+
+

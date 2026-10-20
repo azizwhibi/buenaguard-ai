@@ -17,12 +17,12 @@ class Settings(BaseSettings):
     )
     
     GEMINI_MODEL: str = Field(
-        default="gemini-2.5-flash",
+        default="gemini-3.5-flash-lite",
         description="Primary Gemini model used for DLP classification and OU mapping"
     )
     
     GEMINI_FALLBACK_MODELS: List[str] = Field(
-        default_factory=lambda: ["gemini-3.8-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.0-flash"],
+        default_factory=lambda: ["gemini-3.1-flash-lite", "gemini-3.6-flash", "gemini-flash-latest"],
         description="Fallback Gemini models if primary is unavailable"
     )
     
